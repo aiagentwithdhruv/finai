@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparables</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User avatar" />
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Comparable Companies</h1>
+                    <p class="text-text-secondary text-sm mt-1">Peer company tracking with live market multiples.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <button onclick="refreshData()" class="h-9 px-4 bg-panel border border-border hover:bg-card text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                        Refresh All
+                    </button>
+                    <button class="h-9 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        Add Company
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterSector('all')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-white transition-all" data-sector="all">All</button>
+                    <button onclick="filterSector('technology')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-panel border border-border text-text-secondary hover:bg-card hover:text-text-primary transition-all" data-sector="technology">Technology</button>
+                    <button onclick="filterSector('healthcare')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-panel border border-border text-text-secondary hover:bg-card hover:text-primary transition-all" data-sector="healthcare">Healthcare</button>
+                    <button onclick="filterSector('industrials')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-panel border border-border text-text-secondary hover:bg-card hover:text-primary transition-all" data-sector="industrials">Industrials</button>
+                    <button onclick="filterSector('financial')" class="px-4 py-1.5 rounded-full text-xs font-medium bg-panel border border-border text-text-secondary hover:bg-card hover:text-primary transition-all" data-sector="financial">Financial Services</button>
+                </div>
+                <div class="text-xs text-text-tertiary font-mono">
+                    Last refreshed: <span id="lastRefresh">Today, 14:32 GMT</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="xl:col-span-2 bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-border flex justify-between items-center bg-card">
+                        <h3 class="text-sm font-medium text-text-primary">Market Comparables</h3>
+                        <button class="h-7 px-3 bg-panel border border-border hover:bg-border text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-download text-text-tertiary"></i> Export to Excel
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[1200px]" id="compsTable">
+                            <thead>
+                                <tr class="bg-panel/50 border-b border-border">
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-8">
+                                        <input type="checkbox" onclick="toggleAllCheckboxes(this)" class="w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Company Name</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Ticker</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Sector</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">Market Cap</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">EV</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">Revenue</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">EBITDA</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">EV/EBITDA</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">EV/Revenue</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">P/E</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">EBITDA Margin</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">Revenue Growth</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm font-body" id="compsTableBody">
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="technology">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary text-[10px] font-bold">S</div>
+                                        <span class="truncate">Sage Group</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:SGE</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">Technology</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£12.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£13.1B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£2.3B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£580M</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-danger font-medium">22.6x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">5.7x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">28.4</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">25.2%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +8.1%
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="technology">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold">A</div>
+                                        AVEVA Group
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:AVV</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">Technology</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£9.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£10.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£1.5B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£420M</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-danger font-medium">24.3x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">6.8x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">31.2</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">28.0%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +12.3%
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="technology">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center text-purple-400 text-[10px] font-bold">K</div>
+                                        Kainos Group
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:KNOS</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">Technology</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£1.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£1.1B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£380M</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£72M</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary font-medium">15.3x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">2.9x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">18.7</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">18.9%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +5.2%
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="healthcare">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-success/20 flex items-center justify-center text-success text-[10px] font-bold">G</div>
+                                        GSK plc
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:GSK</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">Healthcare</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£68.5B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£75.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£29.3B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£8.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success font-medium">9.2x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">2.6x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">12.4</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">28.0%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +3.8%
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="healthcare">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-success/20 flex items-center justify-center text-success text-[10px] font-bold">A</div>
+                                        AstraZeneca
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:AZN</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">Healthcare</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£182.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£194.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£37.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£11.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary font-medium">16.5x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">5.2x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">24.8</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">31.6%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +14.2%
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="industrials">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-warning/20 flex items-center justify-center text-warning text-[10px] font-bold">R</div>
+                                        Rolls-Royce
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:RR</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">Industrials</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£38.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£42.5B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£15.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£2.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary font-medium">15.2x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">2.8x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">18.6</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">18.2%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +22.4%
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors" data-sector="financial">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold">L</div>
+                                        Lloyds Banking
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:LLOY</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">Financial Services</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£36.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£38.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£18.2B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£6.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success font-medium">6.0x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">2.1x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">8.2</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">35.2%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-danger flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-down text-[10px]"></i> -2.1%
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt hover:bg-panel/30 transition-colors" data-sector="financial">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" onchange="updateMedians()" class="company-checkbox w-3.5 h-3.5 rounded border-border bg-panel accent-primary cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold">B</div>
+                                        Barclays
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary font-mono text-xs">LON:BARC</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">Financial Services</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-primary">£28.4B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£29.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£24.6B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">£7.8B</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success font-medium">3.8x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">1.2x</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">6.8</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">31.7%</td>
+                                    <td class="px-4 py-3 text-right font-mono tabular-nums text-success flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-arrow-up text-[10px]"></i> +1.4%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                        <h3 class="text-sm font-medium text-text-primary mb-4">Sector Median Multiples</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center pb-2 border-b border-border/50">
+                                <span class="text-xs text-text-secondary">EV/EBITDA</span>
+                                <span class="font-mono tabular-nums text-text-primary text-sm" id="medianEVEBITDA">15.3x</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2 border-b border-border/50">
+                                <span class="text-xs text-text-secondary">EV/Revenue</span>
+                                <span class="font-mono tabular-nums text-text-primary text-sm" id="medianEVRevenue">3.9x</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2 border-b border-border/50">
+                                <span class="text-xs text-text-secondary">P/E Ratio</span>
+                                <span class="font-mono tabular-nums text-text-primary text-sm" id="medianPE">18.7</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-text-secondary">EBITDA Margin</span>
+                                <span class="font-mono tabular-nums text-text-primary text-sm" id="medianMargin">27.6%</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-border">
+                            <div class="flex items-center gap-2 text-xs text-text-tertiary">
+                                <i class="fa-solid fa-info-circle"></i>
+                                <span id="selectedCount">All companies (8)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                        <h3 class="text-sm font-medium text-text-primary mb-4">Valuation Analysis</h3>
+                        <div id="scatterChart" style="height: 280px"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-medium text-text-primary mb-4">Revenue Comparison</h3>
+                <div id="revenueChart" style="height: 320px"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleAllCheckboxes(source) {
+            const checkboxes = document.querySelectorAll('.company-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = source.checked;
+            });
+            updateMedians();
+        }
+
+        function filterSector(sector) {
+            const buttons = document.querySelectorAll('[data-sector]');
+            buttons.forEach(btn => {
+                if (btn.dataset.sector === sector) {
+                    btn.className = 'px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-white transition-all';
+                } else {
+                    btn.className = 'px-4 py-1.5 rounded-full text-xs font-medium bg-panel border border-border text-text-secondary hover:bg-card hover:text-primary transition-all';
+                }
+            });
+
+            const rows = document.querySelectorAll('#compsTableBody tr');
+            rows.forEach(row => {
+                if (sector === 'all' || row.dataset.sector === sector) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function refreshData() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+            document.getElementById('lastRefresh').textContent = `Today, ${timeString}`;
+        }
+
+        function updateMedians() {
+            const checkboxes = document.querySelectorAll('.company-checkbox:checked');
+            const count = checkboxes.length;
+            
+            if (count === 0) {
+                document.getElementById('selectedCount').textContent = 'No companies selected';
+                return;
+            }
+
+            document.getElementById('selectedCount').textContent = count === 8 ? 'All companies (8)' : `Selected companies (${count})`;
+        }
+
+        window.addEventListener('load', function() {
+            try {
+                const scatterData = [{
+                    x: [22.6, 24.3, 15.3, 9.2, 16.5, 15.2, 6.0, 3.8],
+                    y: [25.2, 28.0, 18.9, 28.0, 31.6, 18.2, 35.2, 31.7],
+                    mode: 'markers+text',
+                    type: 'scatter',
+                    text: ['Sage', 'AVEVA', 'Kainos', 'GSK', 'AstraZeneca', 'Rolls-Royce', 'Lloyds', 'Barclays'],
+                    textposition: 'top center',
+                    textfont: { size: 9, color: '#94A3B8', family: 'JetBrains Mono' },
+                    marker: {
+                        size: 10,
+                        color: ['#3B82F6', '#3B82F6', '#3B82F6', '#10B981', '#10B981', '#F59E0B', '#60A5FA', '#60A5FA'],
+                        line: { width: 1, color: '#1E1E2E' }
+                    }
+                }];
+
+                const scatterLayout = {
+                    plot_bgcolor: 'transparent',
+                    paper_bgcolor: 'transparent',
+                    margin: { t: 20, r: 10, b: 40, l: 50 },
+                    xaxis: {
+                        title: { text: 'EV/EBITDA', font: { color: '#475569', size: 10 } },
+                        showgrid: true,
+                        gridcolor: '#1E1E2E',
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 9, family: 'JetBrains Mono' }
+                    },
+                    yaxis: {
+                        title: { text: 'EBITDA Margin (%)', font: { color: '#475569', size: 10 } },
+                        showgrid: true,
+                        gridcolor: '#1E1E2E',
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 9, family: 'JetBrains Mono' }
+                    },
+                    hovermode: 'closest',
+                    hoverlabel: {
+                        bgcolor: '#16161F',
+                        bordercolor: '#1E1E2E',
+                        font: { color: '#F8FAFC', family: 'JetBrains Mono' }
+                    }
+                };
+
+                Plotly.newPlot('scatterChart', scatterData, scatterLayout, {
+                    responsive: true,
+                    displayModeBar: false,
+                    displaylogo: false
+                });
+
+                const revenueData = [{
+                    x: ['Sage', 'AVEVA', 'Kainos', 'GSK', 'AstraZeneca', 'Rolls-Royce', 'Lloyds', 'Barclays'],
+                    y: [2.3, 1.5, 0.38, 29.3, 37.4, 15.4, 18.2, 24.6],
+                    type: 'bar',
+                    marker: {
+                        color: ['#3B82F6', '#3B82F6', '#3B82F6', '#10B981', '#10B981', '#F59E0B', '#60A5FA', '#60A5FA'],
+                        line: { width: 1, color: '#1E1E2E' }
+                    }
+                }];
+
+                const revenueLayout = {
+                    plot_bgcolor: 'transparent',
+                    paper_bgcolor: 'transparent',
+                    margin: { t: 10, r: 10, b: 60, l: 50 },
+                    xaxis: {
+                        showgrid: false,
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 10, family: 'Inter' },
+                        tickangle: -45
+                    },
+                    yaxis: {
+                        title: { text: 'Revenue (£B)', font: { color: '#475569', size: 10 } },
+                        showgrid: true,
+                        gridcolor: '#1E1E2E',
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 10, family: 'JetBrains Mono' },
+                        tickprefix: '£',
+                        ticksuffix: 'B'
+                    },
+                    hovermode: 'x',
+                    hoverlabel: {
+                        bgcolor: '#16161F',
+                        bordercolor: '#1E1E2E',
+                        font: { color: '#F8FAFC', family: 'JetBrains Mono' }
+                    }
+                };
+
+                Plotly.newPlot('revenueChart', revenueData, revenueLayout, {
+                    responsive: true,
+                    displayModeBar: false,
+                    displaylogo: false
+                });
+            } catch(e) {
+                console.error("Chart rendering error:", e);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0A0A0F 0%, #0F0F1A 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(30, 41, 59, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        .auth-card {
+            position: relative;
+            z-index: 1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    
+    <div id="login-container" class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <div class="auth-card w-full max-w-md">
+            
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center gap-2 text-3xl font-semibold tracking-tight mb-2">
+                    <i class="fa-solid fa-layer-group text-text-secondary"></i>
+                    <span class="text-text-primary">Fin<span class="text-primary">AI</span></span>
+                </div>
+                <p class="text-text-secondary text-sm font-medium tracking-wide">Financial Document Intelligence</p>
+            </div>
+
+            <div class="bg-card border border-cardBorder rounded-xl p-8 shadow-2xl backdrop-blur-sm">
+                
+                <form id="login-form" class="space-y-5">
+                    
+                    <div>
+                        <label for="email" class="block text-xs font-medium text-text-secondary uppercase tracking-wider mb-2">Email Address</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-text-tertiary text-sm"></i>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email"
+                                placeholder="name@company.com"
+                                class="input-field w-full bg-panel border border-border rounded-lg pl-10 pr-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary transition-all"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-xs font-medium text-text-secondary uppercase tracking-wider mb-2">Password</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-text-tertiary text-sm"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                placeholder="Enter your password"
+                                class="input-field w-full bg-panel border border-border rounded-lg pl-10 pr-12 py-3 text-sm text-text-primary placeholder:text-text-tertiary transition-all"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                onclick="togglePassword()"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary transition-colors"
+                            >
+                                <i class="fa-solid fa-eye text-sm" id="toggle-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="btn-primary w-full bg-primary hover:bg-blue-600 text-white font-medium py-3 rounded-lg transition-all text-sm"
+                    >
+                        Sign In
+                    </button>
+
+                    <div class="text-center">
+                        <a href="#" class="text-xs text-text-secondary hover:text-primary transition-colors">Forgot password?</a>
+                    </div>
+
+                </form>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-border"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs">
+                        <span class="px-3 bg-card text-text-tertiary uppercase tracking-wider">or</span>
+                    </div>
+                </div>
+
+                <button class="btn-outline w-full bg-transparent border border-border hover:border-text-tertiary text-text-primary font-medium py-3 rounded-lg transition-all text-sm flex items-center justify-center gap-2.5">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.64 9.20443C17.64 8.56625 17.5827 7.95262 17.4764 7.36353H9V10.8449H13.8436C13.635 11.9699 13.0009 12.9231 12.0477 13.5613V15.8194H14.9564C16.6582 14.2526 17.64 11.9453 17.64 9.20443Z" fill="#4285F4"/>
+                        <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5613C11.2418 14.1013 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8372 3.96409 10.71H0.957275V13.0418C2.43818 15.9831 5.48182 18 9 18Z" fill="#34A853"/>
+                        <path d="M3.96409 10.7099C3.78409 10.1699 3.68182 9.59309 3.68182 8.99991C3.68182 8.40673 3.78409 7.82991 3.96409 7.28991V4.95809H0.957273C0.347727 6.17309 0 7.54764 0 8.99991C0 10.4522 0.347727 11.8267 0.957273 13.0417L3.96409 10.7099Z" fill="#FBBC05"/>
+                        <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+
+            </div>
+
+            <div class="text-center mt-6">
+                <p class="text-xs text-text-tertiary">
+                    Don't have an account? <a href="#" class="text-primary hover:text-blue-400 transition-colors font-medium">Contact Sales</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <footer id="footer" class="fixed bottom-0 left-0 right-0 py-4 text-center z-10">
+        <p class="text-xs text-text-tertiary">© 2026 FinAI. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+    </script>
+
+</body>
+</html>

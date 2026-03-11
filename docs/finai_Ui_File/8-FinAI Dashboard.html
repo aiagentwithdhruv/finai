@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinAI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-house text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <!-- Header -->
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6d0079dad7-256c5247a8715b317df3.png" alt="professional corporate headshot, minimalist style, neutral background" />
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Overview</h1>
+                    <p class="text-text-secondary text-sm mt-1">Institutional portfolio performance and active deals.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="flex bg-panel border border-border rounded-lg p-0.5 w-full sm:w-auto">
+                        <button class="flex-1 sm:px-3 py-1 text-xs font-medium bg-card text-text-primary rounded-md shadow-sm">1D</button>
+                        <button class="flex-1 sm:px-3 py-1 text-xs font-medium text-text-secondary hover:text-text-primary rounded-md">1W</button>
+                        <button class="flex-1 sm:px-3 py-1 text-xs font-medium text-text-secondary hover:text-text-primary rounded-md">1M</button>
+                        <button class="flex-1 sm:px-3 py-1 text-xs font-medium text-text-secondary hover:text-text-primary rounded-md">YTD</button>
+                    </div>
+                    <button class="h-9 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.3)] w-full sm:w-auto">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        New Deal
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-card border border-cardBorder rounded-xl p-4 shadow-sm relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-label text-text-tertiary uppercase font-medium tracking-wider">Total AUM</span>
+                        <span class="text-success text-xs font-medium flex items-center gap-1 bg-success/10 px-1.5 py-0.5 rounded">
+                            <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> 2.4%
+                        </span>
+                    </div>
+                    <div class="text-2xl font-mono font-medium text-text-primary tabular-nums mt-1">£2.4B</div>
+                    <div class="text-xs text-text-secondary mt-1 font-mono">vs £2.34B prev</div>
+                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-text-tertiary hover:text-primary cursor-pointer text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-cardBorder rounded-xl p-4 shadow-sm relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-label text-text-tertiary uppercase font-medium tracking-wider">Active Deals</span>
+                        <span class="text-text-secondary text-xs font-medium bg-panel border border-border px-1.5 py-0.5 rounded">
+                            12 Pending
+                        </span>
+                    </div>
+                    <div class="text-2xl font-mono font-medium text-text-primary tabular-nums mt-1">34</div>
+                    <div class="text-xs text-text-secondary mt-1 font-mono">Est. Value: £450M</div>
+                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-text-tertiary hover:text-primary cursor-pointer text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-cardBorder rounded-xl p-4 shadow-sm relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-label text-text-tertiary uppercase font-medium tracking-wider">Avg Deal Size</span>
+                        <span class="text-danger text-xs font-medium flex items-center gap-1 bg-danger/10 px-1.5 py-0.5 rounded">
+                            <i class="fa-solid fa-arrow-trend-down text-[10px]"></i> 1.2%
+                        </span>
+                    </div>
+                    <div class="text-2xl font-mono font-medium text-text-primary tabular-nums mt-1">£13.2M</div>
+                    <div class="text-xs text-text-secondary mt-1 font-mono">Target: £15.0M</div>
+                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-text-tertiary hover:text-primary cursor-pointer text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-cardBorder rounded-xl p-4 shadow-sm relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-label text-text-tertiary uppercase font-medium tracking-wider">AI Insights Generated</span>
+                        <span class="text-primary text-xs font-medium bg-primary/10 px-1.5 py-0.5 rounded">
+                            Today
+                        </span>
+                    </div>
+                    <div class="text-2xl font-mono font-medium text-text-primary tabular-nums mt-1">1,204</div>
+                    <div class="text-xs text-text-secondary mt-1 font-mono">98% accuracy score</div>
+                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-text-tertiary hover:text-primary cursor-pointer text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-medium text-text-primary">Portfolio Allocation & Growth</h3>
+                        <button class="text-text-tertiary hover:text-text-primary transition-colors"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>
+                    <div id="mainChart" class="h-[300px] w-full"></div>
+                </div>
+                
+                <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-medium text-text-primary">Deal Flow Pipeline</h3>
+                        <button class="text-text-tertiary hover:text-text-primary transition-colors"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-center space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-text-secondary">Sourcing</span>
+                                <span class="font-mono tabular-nums text-text-primary">45</span>
+                            </div>
+                            <div class="w-full bg-panel rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-text-secondary h-1.5 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-text-secondary">Evaluation</span>
+                                <span class="font-mono tabular-nums text-text-primary">28</span>
+                            </div>
+                            <div class="w-full bg-panel rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-primary h-1.5 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-warning">Due Diligence</span>
+                                <span class="font-mono tabular-nums text-text-primary">12</span>
+                            </div>
+                            <div class="w-full bg-panel rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-warning h-1.5 rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-success">Closing</span>
+                                <span class="font-mono tabular-nums text-text-primary">4</span>
+                            </div>
+                            <div class="w-full bg-panel rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-success h-1.5 rounded-full" style="width: 10%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Section -->
+            <div class="bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden flex flex-col">
+                <div class="p-4 border-b border-border flex justify-between items-center bg-card">
+                    <h3 class="text-sm font-medium text-text-primary">Active Institutional Deals</h3>
+                    <div class="flex gap-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                            <select class="bg-panel border border-border rounded-lg text-xs text-text-secondary pl-7 pr-6 py-1.5 focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                <option>All Sectors</option>
+                                <option>Fintech</option>
+                                <option>Healthcare</option>
+                                <option>SaaS</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                        </div>
+                        <button class="h-7 px-3 bg-panel border border-border hover:bg-border text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-download text-text-tertiary"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr class="bg-panel/50 border-b border-border">
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Target Company</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Sector</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">Est. Value</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Status</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">AI Confidence</th>
+                                <th class="py-3 px-4 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-body">
+                            <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary text-[10px] font-bold">A</div>
+                                    <span class="truncate">Apex Financial Systems</span>
+                                </td>
+                                <td class="px-4 py-3 text-text-secondary">Fintech</td>
+                                <td class="px-4 py-3 text-right font-mono tabular-nums">£45.2M</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">
+                                        Due Diligence
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <span class="font-mono text-success tabular-nums">92%</span>
+                                        <div class="w-12 h-1 bg-panel rounded-full overflow-hidden"><div class="bg-success h-full" style="width: 92%"></div></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-center text-text-tertiary hover:text-text-primary cursor-pointer"><i class="fa-solid fa-ellipsis"></i></td>
+                            </tr>
+                            <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center text-purple-400 text-[10px] font-bold">N</div>
+                                    Nexo Health Tech
+                                </td>
+                                <td class="px-4 py-3 text-text-secondary">Healthcare</td>
+                                <td class="px-4 py-3 text-right font-mono tabular-nums">£112.5M</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        Evaluation
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <span class="font-mono text-warning tabular-nums">78%</span>
+                                        <div class="w-12 h-1 bg-panel rounded-full overflow-hidden"><div class="bg-warning h-full" style="width: 78%"></div></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-center text-text-tertiary hover:text-text-primary cursor-pointer"><i class="fa-solid fa-ellipsis"></i></td>
+                            </tr>
+                            <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold">C</div>
+                                    CloudScale Data
+                                </td>
+                                <td class="px-4 py-3 text-text-secondary">SaaS</td>
+                                <td class="px-4 py-3 text-right font-mono tabular-nums">£28.4M</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Closing
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <span class="font-mono text-success tabular-nums">96%</span>
+                                        <div class="w-12 h-1 bg-panel rounded-full overflow-hidden"><div class="bg-success h-full" style="width: 96%"></div></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-center text-text-tertiary hover:text-text-primary cursor-pointer"><i class="fa-solid fa-ellipsis"></i></td>
+                            </tr>
+                             <tr class="bg-tableAlt hover:bg-panel/30 transition-colors">
+                                <td class="px-4 py-3 font-medium text-text-primary flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded bg-danger/20 flex items-center justify-center text-danger text-[10px] font-bold">L</div>
+                                    Lumina Logistics
+                                </td>
+                                <td class="px-4 py-3 text-text-secondary">Supply Chain</td>
+                                <td class="px-4 py-3 text-right font-mono tabular-nums">£15.8M</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-danger/10 text-danger border border-danger/20">
+                                        On Hold
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <span class="font-mono text-danger tabular-nums">42%</span>
+                                        <div class="w-12 h-1 bg-panel rounded-full overflow-hidden"><div class="bg-danger h-full" style="width: 42%"></div></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-center text-text-tertiary hover:text-text-primary cursor-pointer"><i class="fa-solid fa-ellipsis"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Plotly Chart Initialization
+        window.addEventListener('load', function() {
+            try {
+                var trace1 = {
+                    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    y: [120, 132, 145, 150, 165, 180, 195, 210, 225, 230, 245, 260],
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Tech Sector',
+                    line: {
+                        color: '#3B82F6',
+                        width: 2,
+                        shape: 'spline'
+                    },
+                    fill: 'tozeroy',
+                    fillcolor: 'rgba(59, 130, 246, 0.1)'
+                };
+
+                var trace2 = {
+                    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    y: [80, 85, 90, 88, 95, 100, 105, 110, 115, 120, 125, 130],
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Healthcare',
+                    line: {
+                        color: '#10B981',
+                        width: 2,
+                        shape: 'spline'
+                    }
+                };
+
+                var data = [trace1, trace2];
+
+                var layout = {
+                    plot_bgcolor: 'transparent',
+                    paper_bgcolor: 'transparent',
+                    margin: { t: 10, r: 10, b: 30, l: 30 },
+                    xaxis: {
+                        showgrid: false,
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 10, family: 'JetBrains Mono' },
+                        tickcolor: '#1E293B'
+                    },
+                    yaxis: {
+                        showgrid: true,
+                        gridcolor: '#1E1E2E',
+                        zeroline: false,
+                        tickfont: { color: '#475569', size: 10, family: 'JetBrains Mono' },
+                        tickprefix: '£',
+                        ticksuffix: 'M'
+                    },
+                    legend: {
+                        orientation: 'h',
+                        yanchor: 'bottom',
+                        y: 1.02,
+                        xanchor: 'right',
+                        x: 1,
+                        font: { color: '#94A3B8', size: 11 }
+                    },
+                    hovermode: 'x unified',
+                    hoverlabel: {
+                        bgcolor: '#16161F',
+                        bordercolor: '#1E1E2E',
+                        font: { color: '#F8FAFC', family: 'JetBrains Mono' }
+                    }
+                };
+
+                var config = {
+                    responsive: true,
+                    displayModeBar: false,
+                    displaylogo: false
+                };
+
+                Plotly.newPlot('mainChart', data, layout, config);
+            } catch(e) {
+                console.error("Chart rendering error:", e);
+                document.getElementById('mainChart').innerHTML = '<div class="flex items-center justify-center h-full text-text-tertiary text-sm">Chart rendering failed</div>';
+            }
+        });
+    </script>
+</body>
+</html>

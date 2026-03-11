@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3B82F6;
+            cursor: pointer;
+            border: 2px solid #0A0A0F;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3B82F6;
+            cursor: pointer;
+            border: 2px solid #0A0A0F;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center text-primary"></i>
+                <span class="text-sm font-medium">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="User" />
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <nav id="settings-subnav" class="w-64 bg-panel border-r border-border overflow-y-auto py-4 px-3 hidden lg:block">
+                <div class="space-y-1">
+                    <button onclick="showSection('general')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors text-left">
+                        <i class="fa-solid fa-sliders text-primary w-5 text-center"></i>
+                        <span class="text-sm font-medium">General</span>
+                    </button>
+                    <button onclick="showSection('ai-models')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors text-left">
+                        <i class="fa-solid fa-brain w-5 text-center group-hover:text-primary transition-colors"></i>
+                        <span class="text-sm">AI Models</span>
+                    </button>
+                    <button onclick="showSection('api-keys')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors text-left">
+                        <i class="fa-solid fa-key w-5 text-center group-hover:text-primary transition-colors"></i>
+                        <span class="text-sm">API Keys</span>
+                    </button>
+                    <button onclick="showSection('team')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors text-left">
+                        <i class="fa-solid fa-users w-5 text-center group-hover:text-primary transition-colors"></i>
+                        <span class="text-sm">Team</span>
+                    </button>
+                    <button onclick="showSection('integrations')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors text-left">
+                        <i class="fa-solid fa-plug w-5 text-center group-hover:text-primary transition-colors"></i>
+                        <span class="text-sm">Integrations</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-4 md:p-6 space-y-6 max-w-5xl">
+                    
+                    <div id="general-section" class="settings-section">
+                        <div class="mb-6">
+                            <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">General Settings</h1>
+                            <p class="text-text-secondary text-sm mt-1">Configure application-wide preferences and document processing parameters.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Application Configuration</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Application Name</label>
+                                        <input type="text" value="FinAI Platform" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary transition-all">
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-label text-text-tertiary uppercase mb-2">Timezone</label>
+                                            <select class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                                <option>Europe/London (GMT)</option>
+                                                <option>Europe/Paris (CET)</option>
+                                                <option>America/New_York (EST)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-label text-text-tertiary uppercase mb-2">Default Currency</label>
+                                            <select class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                                <option>GBP (£)</option>
+                                                <option>USD ($)</option>
+                                                <option>EUR (€)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Date Format</label>
+                                        <select class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                            <option>DD/MM/YYYY</option>
+                                            <option>MM/DD/YYYY</option>
+                                            <option>YYYY-MM-DD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Document Processing Settings</h3>
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-label text-text-tertiary uppercase mb-2">Max File Size (MB)</label>
+                                            <input type="number" value="50" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-label text-text-tertiary uppercase mb-2">Chunk Size (tokens)</label>
+                                            <input type="number" value="1000" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Chunk Overlap (tokens)</label>
+                                        <input type="number" value="200" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Supported Formats</label>
+                                        <div class="flex flex-wrap gap-2 mt-2">
+                                            <span class="px-2 py-1 bg-panel border border-border rounded text-xs font-mono text-text-secondary">.pdf</span>
+                                            <span class="px-2 py-1 bg-panel border border-border rounded text-xs font-mono text-text-secondary">.docx</span>
+                                            <span class="px-2 py-1 bg-panel border border-border rounded text-xs font-mono text-text-secondary">.xlsx</span>
+                                            <span class="px-2 py-1 bg-panel border border-border rounded text-xs font-mono text-text-secondary">.csv</span>
+                                            <span class="px-2 py-1 bg-panel border border-border rounded text-xs font-mono text-text-secondary">.txt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-3">
+                                <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ai-models-section" class="settings-section hidden">
+                        <div class="mb-6">
+                            <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">AI Models Configuration</h1>
+                            <p class="text-text-secondary text-sm mt-1">Configure AI models, parameters, and monitor usage costs.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Active Models</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Primary LLM Model</label>
+                                        <select class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                            <option>UX Pilot Sonnet 4</option>
+                                            <option>GPT-4o</option>
+                                            <option>UX Pilot Haiku</option>
+                                            <option>GPT-4 Turbo</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Embedding Model</label>
+                                        <select class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                            <option>text-embedding-3-small</option>
+                                            <option>text-embedding-3-large</option>
+                                            <option>text-embedding-ada-002</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Model Parameters</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="flex justify-between items-center mb-3">
+                                            <label class="text-label text-text-tertiary uppercase">Temperature</label>
+                                            <span class="text-sm font-mono text-primary tabular-nums" id="temperature-value">0.2</span>
+                                        </div>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.2" class="w-full h-1 bg-panel rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('temperature-value').textContent = this.value">
+                                        <div class="flex justify-between text-xs text-text-tertiary mt-1 font-mono">
+                                            <span>0.0 (Precise)</span>
+                                            <span>1.0 (Creative)</span>
+                                        </div>
+                                        <p class="text-xs text-text-secondary mt-2">Lower values (0.0-0.3) recommended for financial analysis requiring precision.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Max Tokens per Generation</label>
+                                        <input type="number" value="4096" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-sm font-medium text-text-primary">Cost Tracking</h3>
+                                    <span class="text-xs text-text-tertiary uppercase">This Month</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="bg-panel border border-border rounded-lg p-4">
+                                        <div class="text-label text-text-tertiary uppercase mb-1">Total API Calls</div>
+                                        <div class="text-xl font-mono font-medium text-text-primary tabular-nums">124,582</div>
+                                        <div class="text-xs text-success mt-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> 12.4% vs last month
+                                        </div>
+                                    </div>
+                                    <div class="bg-panel border border-border rounded-lg p-4">
+                                        <div class="text-label text-text-tertiary uppercase mb-1">Total Tokens</div>
+                                        <div class="text-xl font-mono font-medium text-text-primary tabular-nums">8.2M</div>
+                                        <div class="text-xs text-text-secondary mt-1">4.1M input / 4.1M output</div>
+                                    </div>
+                                    <div class="bg-panel border border-border rounded-lg p-4">
+                                        <div class="text-label text-text-tertiary uppercase mb-1">Estimated Cost</div>
+                                        <div class="text-xl font-mono font-medium text-text-primary tabular-nums">£2,847</div>
+                                        <div class="text-xs text-warning mt-1 flex items-center gap-1">
+                                            <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> 8.2% vs last month
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-3">
+                                <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="api-keys-section" class="settings-section hidden">
+                        <div class="mb-6">
+                            <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">API Keys</h1>
+                            <p class="text-text-secondary text-sm mt-1">Manage external service integrations and authentication keys.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Data Provider APIs</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Companies House API Key</label>
+                                        <div class="flex gap-2">
+                                            <input type="password" value="sk_live_abcdef123456789" class="flex-1 bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                            <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                                <i class="fa-solid fa-vial text-xs"></i> Test
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-xs text-success">Connected - Last verified 2 hours ago</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Alpha Vantage API Key</label>
+                                        <div class="flex gap-2">
+                                            <input type="password" value="AVKEY_98765WXYZ" class="flex-1 bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                            <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                                <i class="fa-solid fa-vial text-xs"></i> Test
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-xs text-success">Connected - Last verified 5 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">LLM Provider APIs</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">UX Pilot AI API Key</label>
+                                        <div class="flex gap-2">
+                                            <input type="password" value="sk-ant-api03-xxxxxxxxxx" class="flex-1 bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                            <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                                <i class="fa-solid fa-vial text-xs"></i> Test
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-xs text-success">Active - 12,450 requests this month</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">UX Pilot AI API Key</label>
+                                        <div class="flex gap-2">
+                                            <input type="password" value="sk-proj-xxxxxxxxxxxxxxxxxx" class="flex-1 bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                            <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                                <i class="fa-solid fa-vial text-xs"></i> Test
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-xs text-success">Active - 8,230 requests this month</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">LangSmith Configuration</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">Project Name</label>
+                                        <input type="text" value="finai-production" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-label text-text-tertiary uppercase mb-2">LangSmith API Key</label>
+                                        <div class="flex gap-2">
+                                            <input type="password" value="lsv2_pt_xxxxxxxxxxxxxxxx" class="flex-1 bg-panel border border-border rounded-lg px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-primary transition-all">
+                                            <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                                <i class="fa-solid fa-vial text-xs"></i> Test
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-xs text-success">Logging enabled - 1,204 traces today</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-3">
+                                <button class="px-4 py-2 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                    Cancel
+                                </button>
+                                <button class="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                    Save Keys
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="team-section" class="settings-section hidden">
+                        <div class="mb-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Team Management</h1>
+                                    <p class="text-text-secondary text-sm mt-1">Manage team members, roles, and permissions.</p>
+                                </div>
+                                <button class="h-9 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                    <i class="fa-solid fa-user-plus text-xs"></i>
+                                    Invite User
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[800px]">
+                                        <thead>
+                                            <tr class="bg-panel/50 border-b border-border">
+                                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Name</th>
+                                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Email</th>
+                                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Role</th>
+                                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Last Login</th>
+                                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm">
+                                            <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" class="w-8 h-8 rounded-full border border-border" alt="User">
+                                                        <span class="font-medium text-text-primary">James Mitchell</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary">james.mitchell@finai.uk</td>
+                                                <td class="px-4 py-3">
+                                                    <select class="bg-panel border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-primary">
+                                                        <option>Admin</option>
+                                                        <option>Director</option>
+                                                        <option>Senior</option>
+                                                        <option>Analyst</option>
+                                                    </select>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary font-mono text-xs">2 hours ago</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                        <i class="fa-solid fa-ellipsis"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" class="w-8 h-8 rounded-full border border-border" alt="User">
+                                                        <span class="font-medium text-text-primary">Sarah Thompson</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary">sarah.thompson@finai.uk</td>
+                                                <td class="px-4 py-3">
+                                                    <select class="bg-panel border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-primary">
+                                                        <option>Director</option>
+                                                        <option>Admin</option>
+                                                        <option>Senior</option>
+                                                        <option>Analyst</option>
+                                                    </select>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary font-mono text-xs">5 hours ago</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                        <i class="fa-solid fa-ellipsis"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-8 h-8 rounded-full border border-border" alt="User">
+                                                        <span class="font-medium text-text-primary">David Chen</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary">david.chen@finai.uk</td>
+                                                <td class="px-4 py-3">
+                                                    <select class="bg-panel border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-primary">
+                                                        <option>Senior</option>
+                                                        <option>Admin</option>
+                                                        <option>Director</option>
+                                                        <option>Analyst</option>
+                                                    </select>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary font-mono text-xs">1 day ago</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                        <i class="fa-solid fa-ellipsis"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="bg-tableAlt hover:bg-panel/30 transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" class="w-8 h-8 rounded-full border border-border" alt="User">
+                                                        <span class="font-medium text-text-primary">Emily Roberts</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary">emily.roberts@finai.uk</td>
+                                                <td class="px-4 py-3">
+                                                    <select class="bg-panel border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-primary">
+                                                        <option>Analyst</option>
+                                                        <option>Admin</option>
+                                                        <option>Director</option>
+                                                        <option>Senior</option>
+                                                    </select>
+                                                </td>
+                                                <td class="px-4 py-3 text-text-secondary font-mono text-xs">3 days ago</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                        <i class="fa-solid fa-ellipsis"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Role Permissions Matrix</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr class="border-b border-border">
+                                                <th class="py-2 px-3 text-label text-text-tertiary font-medium uppercase tracking-wider">Permission</th>
+                                                <th class="py-2 px-3 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Analyst</th>
+                                                <th class="py-2 px-3 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Senior</th>
+                                                <th class="py-2 px-3 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Director</th>
+                                                <th class="py-2 px-3 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Admin</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm">
+                                            <tr class="border-b border-border/50">
+                                                <td class="py-2 px-3 text-text-secondary">View Dashboard</td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                            </tr>
+                                            <tr class="border-b border-border/50">
+                                                <td class="py-2 px-3 text-text-secondary">Generate Reports</td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                            </tr>
+                                            <tr class="border-b border-border/50">
+                                                <td class="py-2 px-3 text-text-secondary">Approve Deals</td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                            </tr>
+                                            <tr class="border-b border-border/50">
+                                                <td class="py-2 px-3 text-text-secondary">Manage Team</td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2 px-3 text-text-secondary">System Configuration</td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-xmark text-text-tertiary"></i></td>
+                                                <td class="py-2 px-3 text-center"><i class="fa-solid fa-check text-success"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="integrations-section" class="settings-section hidden">
+                        <div class="mb-6">
+                            <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Integrations</h1>
+                            <p class="text-text-secondary text-sm mt-1">Connected external services and data sources.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Financial Data Sources</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-solid fa-building text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">Companies House API</div>
+                                                <div class="text-xs text-text-secondary">UK company registry and filings</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                                <span class="text-xs text-success">Connected</span>
+                                            </div>
+                                            <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-solid fa-chart-line text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">yfinance</div>
+                                                <div class="text-xs text-text-secondary">Market data and stock prices</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                                <span class="text-xs text-success">Connected</span>
+                                            </div>
+                                            <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-solid fa-landmark text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">FRED</div>
+                                                <div class="text-xs text-text-secondary">Federal Reserve economic data</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                                <span class="text-xs text-success">Connected</span>
+                                            </div>
+                                            <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-solid fa-file-contract text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">SEC EDGAR</div>
+                                                <div class="text-xs text-text-secondary">US securities filings and reports</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                                <span class="text-xs text-success">Connected</span>
+                                            </div>
+                                            <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Development & Monitoring</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-solid fa-microscope text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">LangSmith</div>
+                                                <div class="text-xs text-text-secondary">LLM observability and tracing</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                                <span class="text-xs text-success">Connected</span>
+                                            </div>
+                                            <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Available Integrations</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg opacity-60">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-brands fa-slack text-text-tertiary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">Slack</div>
+                                                <div class="text-xs text-text-secondary">Team notifications and alerts</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-text-tertiary rounded-full"></div>
+                                                <span class="text-xs text-text-tertiary">Not configured</span>
+                                            </div>
+                                            <button class="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded hover:bg-primary/30 transition-colors">
+                                                Connect
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-panel border border-border rounded-lg opacity-60">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-card border border-border rounded-lg flex items-center justify-center">
+                                                <i class="fa-brands fa-salesforce text-text-tertiary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-text-primary text-sm">Salesforce</div>
+                                                <div class="text-xs text-text-secondary">CRM and deal pipeline sync</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-text-tertiary rounded-full"></div>
+                                                <span class="text-xs text-text-tertiary">Not configured</span>
+                                            </div>
+                                            <button class="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded hover:bg-primary/30 transition-colors">
+                                                Connect
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.settings-section');
+            sections.forEach(section => section.classList.add('hidden'));
+            
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            const navButtons = document.querySelectorAll('#settings-subnav button');
+            navButtons.forEach(btn => {
+                btn.classList.remove('bg-card', 'text-text-primary');
+                btn.classList.add('text-text-secondary', 'hover:bg-card', 'hover:text-text-primary');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('text-primary');
+                const span = btn.querySelector('span');
+                span.classList.remove('font-medium');
+            });
+
+            const activeButton = document.querySelector(`button[onclick="showSection('${sectionName}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('bg-card', 'text-text-primary');
+                activeButton.classList.remove('text-text-secondary', 'hover:bg-card', 'hover:text-text-primary');
+                const icon = activeButton.querySelector('i');
+                icon.classList.add('text-primary');
+                const span = activeButton.querySelector('span');
+                span.classList.add('font-medium');
+            }
+        }
+    </script>
+</body>
+</html>

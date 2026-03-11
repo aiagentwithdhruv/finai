@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <!-- Header -->
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User Avatar" />
+                </div>
+            </div>
+        </header>
+
+        <!-- Deal Room Modal (Hidden by default) -->
+        <div id="dealRoomModal" class="fixed inset-0 bg-background z-50 hidden">
+            <div class="h-full flex flex-col">
+                <!-- Deal Room Header -->
+                <div class="h-16 border-b border-border flex items-center justify-between px-6 bg-card">
+                    <div class="flex items-center gap-4">
+                        <button onclick="closeDealRoom()" class="text-text-secondary hover:text-text-primary transition-colors">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-lg font-semibold">Project Atlas</h1>
+                            <span class="text-text-secondary text-sm">•</span>
+                            <span class="text-text-secondary text-sm">Meridian Technology Solutions</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                M&A
+                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">
+                                Due Diligence
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="h-8 px-3 bg-panel border border-border hover:bg-border text-text-primary text-xs font-medium rounded-lg transition-colors">
+                            <i class="fa-solid fa-share text-xs mr-1"></i>
+                            Share
+                        </button>
+                        <button class="h-8 px-3 bg-primary hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors">
+                            <i class="fa-solid fa-edit text-xs mr-1"></i>
+                            Edit Deal
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Deal Room Tabs -->
+                <div class="border-b border-border bg-card">
+                    <nav class="flex px-6">
+                        <button onclick="switchTab('overview')" class="deal-tab active px-4 py-3 text-sm font-medium border-b-2 border-primary text-primary">Overview</button>
+                        <button onclick="switchTab('documents')" class="deal-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary transition-colors">Documents</button>
+                        <button onclick="switchTab('generated')" class="deal-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary transition-colors">Generated Materials</button>
+                        <button onclick="switchTab('chat')" class="deal-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary transition-colors">Chat</button>
+                        <button onclick="switchTab('timeline')" class="deal-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary transition-colors">Timeline</button>
+                    </nav>
+                </div>
+
+                <!-- Deal Room Content -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <!-- Overview Tab -->
+                    <div id="overviewTab" class="deal-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <!-- Deal Details -->
+                            <div class="bg-card border border-cardBorder rounded-xl p-5">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Deal Details</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary text-xs">Deal Type</span>
+                                        <span class="text-text-primary text-xs font-mono">Merger & Acquisition</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary text-xs">Value Range</span>
+                                        <span class="text-text-primary text-xs font-mono">£35M - £50M</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary text-xs">Target Close</span>
+                                        <span class="text-text-primary text-xs font-mono">Q2 2024</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary text-xs">Lead Partner</span>
+                                        <span class="text-text-primary text-xs">Sarah Mitchell</span>
+                                    </div>
+                                    <div class="pt-2 border-t border-border">
+                                        <span class="text-text-secondary text-xs block mb-2">Team Members</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full overflow-hidden border border-border">
+                                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                            </div>
+                                            <div class="w-6 h-6 rounded-full overflow-hidden border border-border">
+                                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                            </div>
+                                            <div class="w-6 h-6 rounded-full overflow-hidden border border-border">
+                                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Document Checklist -->
+                            <div class="bg-card border border-cardBorder rounded-xl p-5">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Document Checklist</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                            <span class="text-text-primary text-xs">Financial Statements</span>
+                                        </div>
+                                        <span class="text-text-tertiary text-xs">3 files</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                            <span class="text-text-primary text-xs">Management Accounts</span>
+                                        </div>
+                                        <span class="text-text-tertiary text-xs">2 files</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-times-circle text-danger text-sm"></i>
+                                            <span class="text-text-secondary text-xs">Legal Documents</span>
+                                        </div>
+                                        <span class="text-text-tertiary text-xs">Pending</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-regular fa-circle text-text-tertiary text-sm"></i>
+                                            <span class="text-text-secondary text-xs">Market Analysis</span>
+                                        </div>
+                                        <span class="text-text-tertiary text-xs">Not started</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="bg-card border border-cardBorder rounded-xl p-5">
+                            <h3 class="text-sm font-medium text-text-primary mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <button class="flex flex-col items-center gap-2 p-3 bg-panel border border-border rounded-lg hover:bg-border transition-colors">
+                                    <i class="fa-solid fa-upload text-primary"></i>
+                                    <span class="text-xs text-text-primary">Upload Doc</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 bg-panel border border-border rounded-lg hover:bg-border transition-colors">
+                                    <i class="fa-solid fa-file-contract text-warning"></i>
+                                    <span class="text-xs text-text-primary">Generate Teaser</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 bg-panel border border-border rounded-lg hover:bg-border transition-colors">
+                                    <i class="fa-solid fa-memo text-success"></i>
+                                    <span class="text-xs text-text-primary">Generate Memo</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 bg-panel border border-border rounded-lg hover:bg-border transition-colors">
+                                    <i class="fa-solid fa-message text-primary"></i>
+                                    <span class="text-xs text-text-primary">Chat about Deal</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Tabs (Hidden) -->
+                    <div id="documentsTab" class="deal-content hidden">
+                        <div class="text-center py-12">
+                            <i class="fa-solid fa-file-lines text-4xl text-text-tertiary mb-4"></i>
+                            <h3 class="text-lg font-medium text-text-primary mb-2">Deal Documents</h3>
+                            <p class="text-text-secondary">Filtered document library for this deal</p>
+                        </div>
+                    </div>
+
+                    <div id="generatedTab" class="deal-content hidden">
+                        <div class="text-center py-12">
+                            <i class="fa-solid fa-wand-magic-sparkles text-4xl text-text-tertiary mb-4"></i>
+                            <h3 class="text-lg font-medium text-text-primary mb-2">Generated Materials</h3>
+                            <p class="text-text-secondary">AI-generated teasers, memos, and reports</p>
+                        </div>
+                    </div>
+
+                    <div id="chatTab" class="deal-content hidden">
+                        <div class="text-center py-12">
+                            <i class="fa-solid fa-message text-4xl text-text-tertiary mb-4"></i>
+                            <h3 class="text-lg font-medium text-text-primary mb-2">Deal Chat</h3>
+                            <p class="text-text-secondary">RAG chat scoped to this deal's documents</p>
+                        </div>
+                    </div>
+
+                    <div id="timelineTab" class="deal-content hidden">
+                        <div class="text-center py-12">
+                            <i class="fa-solid fa-timeline text-4xl text-text-tertiary mb-4"></i>
+                            <h3 class="text-lg font-medium text-text-primary mb-2">Activity Timeline</h3>
+                            <p class="text-text-secondary">Complete activity feed for this deal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Deals</h1>
+                    <p class="text-text-secondary text-sm mt-1">Manage your deal pipeline and track progress.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="flex bg-panel border border-border rounded-lg p-0.5 w-full sm:w-auto">
+                        <button id="boardViewBtn" class="flex-1 sm:px-3 py-1 text-xs font-medium bg-card text-text-primary rounded-md shadow-sm">Board</button>
+                        <button id="listViewBtn" class="flex-1 sm:px-3 py-1 text-xs font-medium text-text-secondary hover:text-text-primary rounded-md">List</button>
+                    </div>
+                    <button class="h-9 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.3)] w-full sm:w-auto">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        New Deal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-3">
+                <div class="relative">
+                    <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                    <select class="bg-panel border border-border rounded-lg text-xs text-text-secondary pl-7 pr-6 py-1.5 focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                        <option>All Deal Types</option>
+                        <option>M&A</option>
+                        <option>Debt</option>
+                        <option>Equity</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                    <select class="bg-panel border border-border rounded-lg text-xs text-text-secondary pl-7 pr-6 py-1.5 focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                        <option>All Team Members</option>
+                        <option>Sarah Mitchell</option>
+                        <option>James Wilson</option>
+                        <option>Emma Thompson</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Board View -->
+            <div id="boardView" class="overflow-x-auto pb-4">
+                <div class="flex gap-6 min-w-max">
+                    
+                    <!-- Origination Column -->
+                    <div class="w-80 bg-card border border-cardBorder rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-border bg-primary/5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-primary flex items-center gap-2">
+                                    <i class="fa-solid fa-lightbulb text-xs"></i>
+                                    Origination
+                                </h3>
+                                <span class="text-xs text-text-tertiary bg-primary/10 px-2 py-0.5 rounded-full">8</span>
+                            </div>
+                        </div>
+                        <div class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group" onclick="openDealRoom()">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Atlas</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        M&A
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">Meridian Technology Solutions</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-text-tertiary">Documents</span>
+                                    <span class="text-text-primary font-mono">3/8</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-primary h-1 rounded-full" style="width: 37.5%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">2h ago</span>
+                                </div>
+                            </div>
+
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Titan</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                        Debt
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">Sterling Manufacturing Ltd</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-text-tertiary">Documents</span>
+                                    <span class="text-text-primary font-mono">1/8</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-purple-500 h-1 rounded-full" style="width: 12.5%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">4h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NDA Signed Column -->
+                    <div class="w-80 bg-card border border-cardBorder rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-border bg-primary/5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-primary flex items-center gap-2">
+                                    <i class="fa-solid fa-file-signature text-xs"></i>
+                                    NDA Signed
+                                </h3>
+                                <span class="text-xs text-text-tertiary bg-primary/10 px-2 py-0.5 rounded-full">5</span>
+                            </div>
+                        </div>
+                        <div class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Phoenix</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Equity
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">Quantum AI Solutions</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-text-tertiary">Documents</span>
+                                    <span class="text-text-primary font-mono">5/8</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-success h-1 rounded-full" style="width: 62.5%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-9.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">1d ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Due Diligence Column -->
+                    <div class="w-80 bg-card border border-cardBorder rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-border bg-warning/5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-warning flex items-center gap-2">
+                                    <i class="fa-solid fa-search text-xs"></i>
+                                    Due Diligence
+                                </h3>
+                                <span class="text-xs text-text-tertiary bg-warning/10 px-2 py-0.5 rounded-full">3</span>
+                            </div>
+                        </div>
+                        <div class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Nexus</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        M&A
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">Nexo Health Technologies</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-text-tertiary">Documents</span>
+                                    <span class="text-text-primary font-mono">6/8</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-warning h-1 rounded-full" style="width: 75%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">3h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Negotiation Column -->
+                    <div class="w-80 bg-card border border-cardBorder rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-border bg-warning/5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-warning flex items-center gap-2">
+                                    <i class="fa-solid fa-handshake text-xs"></i>
+                                    Negotiation
+                                </h3>
+                                <span class="text-xs text-text-tertiary bg-warning/10 px-2 py-0.5 rounded-full">2</span>
+                            </div>
+                        </div>
+                        <div class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Zenith</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Equity
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">CloudScale Data Systems</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-text-tertiary">Documents</span>
+                                    <span class="text-text-primary font-mono">8/8</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-success h-1 rounded-full" style="width: 100%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">30m ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Closed Column -->
+                    <div class="w-80 bg-card border border-cardBorder rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-border bg-success/5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-success flex items-center gap-2">
+                                    <i class="fa-solid fa-check-circle text-xs"></i>
+                                    Closed
+                                </h3>
+                                <span class="text-xs text-text-tertiary bg-success/10 px-2 py-0.5 rounded-full">4</span>
+                            </div>
+                        </div>
+                        <div class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                            <div class="deal-card bg-panel border border-border rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-text-primary text-sm">Project Apollo</h4>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        M&A
+                                    </span>
+                                </div>
+                                <p class="text-xs text-text-secondary mb-3">Vertex Financial Solutions</p>
+                                <div class="flex items-center justify-between text-xs mb-3">
+                                    <span class="text-success">Completed</span>
+                                    <span class="text-text-primary font-mono">£42.5M</span>
+                                </div>
+                                <div class="w-full bg-background rounded-full h-1 mb-3">
+                                    <div class="bg-success h-1 rounded-full" style="width: 100%"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-5 h-5 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <span class="text-text-tertiary text-xs">2d ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View (Hidden by default) -->
+            <div id="listView" class="hidden bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-border flex justify-between items-center bg-card">
+                    <h3 class="text-sm font-medium text-text-primary">All Deals</h3>
+                    <button class="h-7 px-3 bg-panel border border-border hover:bg-border text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-download text-text-tertiary"></i> Export
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
+                        <thead>
+                            <tr class="bg-panel/50 border-b border-border">
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Deal Name</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Target</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Type</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Stage</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Team</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Documents</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Last Activity</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-right">Value</th>
+                                <th class="py-3 px-4 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-body">
+                            <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors cursor-pointer" onclick="openDealRoom()">
+                                <td class="px-4 py-3 font-medium text-text-primary">Project Atlas</td>
+                                <td class="px-4 py-3 text-text-secondary">Meridian Technology Solutions</td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        M&A
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">
+                                        Due Diligence
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center -space-x-1">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-background">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="Team member" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 font-mono tabular-nums text-text-secondary">3/8</td>
+                                <td class="px-4 py-3 text-text-tertiary font-mono">2h ago</td>
+                                <td class="px-4 py-3 text-right font-mono tabular-nums">£35M - £50M</td>
+                                <td class="px-4 py-3 text-center text-text-tertiary hover:text-text-primary cursor-pointer"><i class="fa-solid fa-ellipsis"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleView(view) {
+            const boardView = document.getElementById('boardView');
+            const listView = document.getElementById('listView');
+            const boardBtn = document.getElementById('boardViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+
+            if (view === 'list') {
+                boardView.classList.add('hidden');
+                listView.classList.remove('hidden');
+                boardBtn.classList.remove('bg-card', 'text-text-primary', 'shadow-sm');
+                boardBtn.classList.add('text-text-secondary', 'hover:text-text-primary');
+                listBtn.classList.add('bg-card', 'text-text-primary', 'shadow-sm');
+                listBtn.classList.remove('text-text-secondary', 'hover:text-text-primary');
+            } else {
+                listView.classList.add('hidden');
+                boardView.classList.remove('hidden');
+                listBtn.classList.remove('bg-card', 'text-text-primary', 'shadow-sm');
+                listBtn.classList.add('text-text-secondary', 'hover:text-text-primary');
+                boardBtn.classList.add('bg-card', 'text-text-primary', 'shadow-sm');
+                boardBtn.classList.remove('text-text-secondary', 'hover:text-text-primary');
+            }
+        }
+
+        function openDealRoom() {
+            document.getElementById('dealRoomModal').classList.remove('hidden');
+        }
+
+        function closeDealRoom() {
+            document.getElementById('dealRoomModal').classList.add('hidden');
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.deal-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active state from all tabs
+            document.querySelectorAll('.deal-tab').forEach(tab => {
+                tab.classList.remove('active', 'border-primary', 'text-primary');
+                tab.classList.add('border-transparent', 'text-text-secondary');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Add active state to selected tab
+            event.target.classList.add('active', 'border-primary', 'text-primary');
+            event.target.classList.remove('border-transparent', 'text-text-secondary');
+        }
+
+        // Event listeners for view toggle
+        document.getElementById('boardViewBtn').addEventListener('click', () => toggleView('board'));
+        document.getElementById('listViewBtn').addEventListener('click', () => toggleView('list'));
+    </script>
+</body>
+</html>

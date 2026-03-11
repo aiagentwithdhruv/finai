@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24',
+                        userMessage: '#1E3A5F'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .skeleton {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #16161F 4%, #1E1E2E 25%, #16161F 36%);
+            background-size: 1000px 100%;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-message text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User avatar" />
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <aside id="chatSidebar" class="w-full lg:w-[280px] bg-panel border-r border-border flex flex-col lg:flex hidden">
+                <div class="p-4 border-b border-border">
+                    <button onclick="createNewChat()" class="w-full h-9 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        New Chat
+                    </button>
+                </div>
+
+                <div class="p-3 border-b border-border">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                        <input type="text" placeholder="Search conversations..." class="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all">
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                    <div class="px-3 py-2 rounded-lg bg-card border border-cardBorder cursor-pointer hover:bg-card/80 transition-colors">
+                        <div class="text-sm text-text-primary font-medium truncate">Meridian revenue analysis</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">2 hours ago</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">Project Atlas due diligence</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">Yesterday</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">Hartwell CIM key metrics</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">2 days ago</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">Apex Financial comparables</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">3 days ago</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">CloudScale valuation multiples</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">1 week ago</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">Nexo Health market analysis</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">1 week ago</div>
+                    </div>
+                    <div class="px-3 py-2 rounded-lg hover:bg-card cursor-pointer transition-colors">
+                        <div class="text-sm text-text-secondary truncate">Q4 portfolio performance</div>
+                        <div class="text-xs text-text-tertiary mt-0.5 font-mono">2 weeks ago</div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <div id="chatScopeBar" class="p-4 border-b border-border bg-background flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-between">
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleChatSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                            <i class="fa-solid fa-bars text-sm"></i>
+                        </button>
+                        <div class="relative flex-1 sm:flex-initial">
+                            <i class="fa-solid fa-database absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                            <select class="w-full sm:w-auto bg-panel border border-border rounded-lg text-xs text-text-primary pl-8 pr-8 py-2 focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                <option>All Documents</option>
+                                <option>Company: Meridian Tech</option>
+                                <option>Deal: Project Atlas</option>
+                                <option>Document: Meridian_Annual_Accounts_2025.pdf</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <button onclick="toggleContextPanel()" class="h-8 px-3 bg-panel border border-border hover:bg-card text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-sidebar text-text-tertiary"></i>
+                        <span class="hidden sm:inline">Context Panel</span>
+                    </button>
+                </div>
+
+                <div class="flex-1 flex overflow-hidden">
+                    <div id="chatMainArea" class="flex-1 flex flex-col overflow-hidden">
+                        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+                            <div class="flex justify-end">
+                                <div class="max-w-[85%] md:max-w-[70%] bg-userMessage rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
+                                    <p class="text-sm text-text-primary">What was Meridian's revenue growth rate over the last 3 years?</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-start">
+                                <div class="max-w-[90%] md:max-w-[75%] bg-card border border-cardBorder rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm space-y-3">
+                                    <div class="text-sm text-text-primary leading-relaxed space-y-2">
+                                        <p>Based on the filed annual accounts, Meridian Technology Solutions showed consistent revenue growth:</p>
+                                        <ul class="list-disc list-inside space-y-1 ml-2">
+                                            <li><strong>FY2023:</strong> £20.1M (+10.4% YoY)</li>
+                                            <li><strong>FY2024:</strong> £22.8M (+13.4% YoY)</li>
+                                            <li><strong>FY2025:</strong> £24.5M (+7.5% YoY)</li>
+                                        </ul>
+                                        <p class="pt-2">The 3-year CAGR is approximately <strong class="text-success">10.4%</strong>. Growth decelerated slightly in FY2025, though EBITDA margins expanded from 16.9% to 18.2% over the same period, suggesting improving operational efficiency.</p>
+                                    </div>
+
+                                    <div class="pt-2 border-t border-border/50">
+                                        <button onclick="toggleSources(this)" class="flex items-center gap-2 text-xs text-text-secondary hover:text-text-primary transition-colors group">
+                                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-hover:text-primary"></i>
+                                            <span class="font-medium">Sources (2)</span>
+                                        </button>
+                                        <div class="hidden mt-2 space-y-1.5 pl-4">
+                                            <div class="flex items-start gap-2 text-xs text-text-secondary hover:text-primary cursor-pointer transition-colors group">
+                                                <i class="fa-solid fa-file-pdf text-danger mt-0.5"></i>
+                                                <span class="group-hover:underline">Meridian_Annual_Accounts_2025.pdf — Pages 8, 12</span>
+                                            </div>
+                                            <div class="flex items-start gap-2 text-xs text-text-secondary hover:text-primary cursor-pointer transition-colors group">
+                                                <i class="fa-solid fa-file-pdf text-danger mt-0.5"></i>
+                                                <span class="group-hover:underline">Meridian_Annual_Accounts_2024.pdf — Page 9</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2 pt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            <i class="fa-solid fa-circle-check mr-1"></i>
+                                            High confidence
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <div class="max-w-[85%] md:max-w-[70%] bg-userMessage rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
+                                    <p class="text-sm text-text-primary">Compare their EBITDA margins to industry benchmarks</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-start">
+                                <div class="max-w-[90%] md:max-w-[75%] bg-card border border-cardBorder rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm space-y-3">
+                                    <div class="text-sm text-text-primary leading-relaxed space-y-3">
+                                        <p>Meridian's EBITDA margin progression compares favorably to UK SaaS sector benchmarks:</p>
+                                        
+                                        <div class="overflow-x-auto -mx-1">
+                                            <table class="w-full text-xs border-collapse min-w-[400px]">
+                                                <thead>
+                                                    <tr class="border-b border-border/50">
+                                                        <th class="text-left py-2 px-2 text-text-tertiary font-medium">Period</th>
+                                                        <th class="text-right py-2 px-2 text-text-tertiary font-medium">Meridian</th>
+                                                        <th class="text-right py-2 px-2 text-text-tertiary font-medium">Industry Avg</th>
+                                                        <th class="text-right py-2 px-2 text-text-tertiary font-medium">Delta</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="font-mono tabular-nums">
+                                                    <tr class="border-b border-border/30">
+                                                        <td class="py-2 px-2 text-text-secondary">FY2023</td>
+                                                        <td class="text-right py-2 px-2">16.9%</td>
+                                                        <td class="text-right py-2 px-2 text-text-secondary">14.2%</td>
+                                                        <td class="text-right py-2 px-2 text-success">+2.7%</td>
+                                                    </tr>
+                                                    <tr class="border-b border-border/30">
+                                                        <td class="py-2 px-2 text-text-secondary">FY2024</td>
+                                                        <td class="text-right py-2 px-2">17.4%</td>
+                                                        <td class="text-right py-2 px-2 text-text-secondary">15.1%</td>
+                                                        <td class="text-right py-2 px-2 text-success">+2.3%</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-2 px-2 text-text-secondary">FY2025</td>
+                                                        <td class="text-right py-2 px-2 text-success font-medium">18.2%</td>
+                                                        <td class="text-right py-2 px-2 text-text-secondary">15.8%</td>
+                                                        <td class="text-right py-2 px-2 text-success">+2.4%</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <p>Meridian consistently outperforms sector averages by <strong>2.3–2.7 percentage points</strong>, indicating superior cost discipline and operational leverage.</p>
+                                    </div>
+
+                                    <div class="pt-2 border-t border-border/50">
+                                        <button onclick="toggleSources(this)" class="flex items-center gap-2 text-xs text-text-secondary hover:text-text-primary transition-colors group">
+                                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-hover:text-primary"></i>
+                                            <span class="font-medium">Sources (3)</span>
+                                        </button>
+                                        <div class="hidden mt-2 space-y-1.5 pl-4">
+                                            <div class="flex items-start gap-2 text-xs text-text-secondary hover:text-primary cursor-pointer transition-colors group">
+                                                <i class="fa-solid fa-file-pdf text-danger mt-0.5"></i>
+                                                <span class="group-hover:underline">Meridian_Annual_Accounts_2025.pdf — Page 14</span>
+                                            </div>
+                                            <div class="flex items-start gap-2 text-xs text-text-secondary hover:text-primary cursor-pointer transition-colors group">
+                                                <i class="fa-solid fa-file-pdf text-danger mt-0.5"></i>
+                                                <span class="group-hover:underline">UK_SaaS_Benchmark_Report_2025.pdf — Pages 22-24</span>
+                                            </div>
+                                            <div class="flex items-start gap-2 text-xs text-text-secondary hover:text-primary cursor-pointer transition-colors group">
+                                                <i class="fa-solid fa-file-pdf text-danger mt-0.5"></i>
+                                                <span class="group-hover:underline">Meridian_Management_Discussion_2025.pdf — Page 6</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2 pt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            <i class="fa-solid fa-circle-check mr-1"></i>
+                                            High confidence
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="chatInputArea" class="border-t border-border bg-background p-4">
+                            <div class="max-w-4xl mx-auto">
+                                <div class="relative flex items-end gap-2">
+                                    <button class="h-10 w-10 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-panel rounded-lg transition-colors flex-shrink-0">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                    </button>
+                                    <div class="flex-1 relative">
+                                        <textarea 
+                                            rows="1" 
+                                            placeholder="Ask anything about your documents..." 
+                                            class="w-full bg-panel border border-border rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all resize-none max-h-32"
+                                            onkeydown="handleEnter(event)"
+                                        ></textarea>
+                                    </div>
+                                    <button onclick="sendMessage()" class="h-10 w-10 flex items-center justify-center bg-primary hover:bg-blue-600 text-white rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)] flex-shrink-0">
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    </button>
+                                </div>
+                                <div class="text-xs text-text-tertiary mt-2 text-center">
+                                    AI responses are generated from your document corpus. Always verify critical information.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside id="contextPanel" class="hidden w-full lg:w-[300px] bg-panel border-l border-border flex-col overflow-hidden">
+                        <div class="p-4 border-b border-border flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-text-primary">Context Panel</h3>
+                            <button onclick="toggleContextPanel()" class="text-text-tertiary hover:text-text-primary">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <div class="bg-card border border-cardBorder rounded-lg p-3 space-y-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                                        <i class="fa-solid fa-file-pdf text-danger text-xs mt-0.5 flex-shrink-0"></i>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs text-text-primary font-medium truncate">Meridian_Annual_Accounts_2025.pdf</div>
+                                            <div class="text-[10px] text-text-tertiary font-mono mt-0.5">Page 8</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-success bg-success/10 px-1.5 py-0.5 rounded flex-shrink-0">94%</span>
+                                </div>
+                                <p class="text-xs text-text-secondary leading-relaxed">
+                                    "Revenue for the financial year ended 31 December 2025 was £24.5M, representing a year-on-year increase of 7.5%..."
+                                </p>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-lg p-3 space-y-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                                        <i class="fa-solid fa-file-pdf text-danger text-xs mt-0.5 flex-shrink-0"></i>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs text-text-primary font-medium truncate">Meridian_Annual_Accounts_2025.pdf</div>
+                                            <div class="text-[10px] text-text-tertiary font-mono mt-0.5">Page 12</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-success bg-success/10 px-1.5 py-0.5 rounded flex-shrink-0">91%</span>
+                                </div>
+                                <p class="text-xs text-text-secondary leading-relaxed">
+                                    "EBITDA margin improved to 18.2% (FY2024: 17.4%), driven by operational efficiencies and economies of scale..."
+                                </p>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-lg p-3 space-y-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                                        <i class="fa-solid fa-file-pdf text-danger text-xs mt-0.5 flex-shrink-0"></i>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs text-text-primary font-medium truncate">Meridian_Annual_Accounts_2024.pdf</div>
+                                            <div class="text-[10px] text-text-tertiary font-mono mt-0.5">Page 9</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-warning bg-warning/10 px-1.5 py-0.5 rounded flex-shrink-0">87%</span>
+                                </div>
+                                <p class="text-xs text-text-secondary leading-relaxed">
+                                    "FY2024 revenue reached £22.8M, up 13.4% from the prior year's £20.1M, with strong performance across all product lines..."
+                                </p>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-lg p-3 space-y-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                                        <i class="fa-solid fa-file-pdf text-danger text-xs mt-0.5 flex-shrink-0"></i>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs text-text-primary font-medium truncate">UK_SaaS_Benchmark_Report_2025.pdf</div>
+                                            <div class="text-[10px] text-text-tertiary font-mono mt-0.5">Page 22</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-success bg-success/10 px-1.5 py-0.5 rounded flex-shrink-0">89%</span>
+                                </div>
+                                <p class="text-xs text-text-secondary leading-relaxed">
+                                    "The median EBITDA margin for UK SaaS companies with £20-50M ARR stood at 15.8% in 2025, up from 15.1% in 2024..."
+                                </p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleChatSidebar() {
+            const chatSidebar = document.getElementById('chatSidebar');
+            chatSidebar.classList.toggle('hidden');
+            chatSidebar.classList.toggle('flex');
+        }
+
+        function toggleContextPanel() {
+            const contextPanel = document.getElementById('contextPanel');
+            contextPanel.classList.toggle('hidden');
+            contextPanel.classList.toggle('flex');
+        }
+
+        function toggleSources(button) {
+            const icon = button.querySelector('i');
+            const sourcesDiv = button.nextElementSibling;
+            
+            if (sourcesDiv.classList.contains('hidden')) {
+                sourcesDiv.classList.remove('hidden');
+                icon.style.transform = 'rotate(90deg)';
+            } else {
+                sourcesDiv.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function createNewChat() {
+            alert('New chat functionality would be implemented here');
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const textarea = document.querySelector('textarea');
+            const message = textarea.value.trim();
+            
+            if (message) {
+                textarea.value = '';
+                textarea.style.height = 'auto';
+            }
+        }
+
+        document.querySelector('textarea').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+        });
+    </script>
+</body>
+</html>

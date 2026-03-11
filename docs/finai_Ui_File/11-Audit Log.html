@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        .event-row {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .event-row:hover {
+            background-color: rgba(18, 18, 26, 0.5);
+        }
+        .event-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .event-details.expanded {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User Avatar" />
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+            
+            <div id="page-header" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-primary text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Audit Log</h1>
+                        <p class="text-text-secondary text-sm mt-0.5">Complete transparency on all AI actions and user activities</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="relative">
+                        <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm"></i>
+                        <input type="text" value="11 Mar 2026" class="bg-panel border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary transition-all h-9 w-full sm:w-auto">
+                    </div>
+                    <button class="h-9 px-4 bg-panel border border-border hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download text-text-tertiary text-xs"></i>
+                        Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <div id="filter-section" class="bg-card border border-cardBorder rounded-xl p-4 space-y-4">
+                <div class="flex flex-wrap gap-2">
+                    <button class="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium transition-colors">All</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card text-xs font-medium transition-colors">Generations</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card text-xs font-medium transition-colors">Approvals</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card text-xs font-medium transition-colors">Uploads</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card text-xs font-medium transition-colors">Logins</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card text-xs font-medium transition-colors">System</button>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                        <select class="w-full bg-panel border border-border rounded-lg text-sm text-text-secondary pl-9 pr-8 py-2 focus:outline-none focus:border-primary appearance-none cursor-pointer h-9">
+                            <option>All Users</option>
+                            <option>Sarah Chen</option>
+                            <option>James Wright</option>
+                            <option>AI System</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                    </div>
+                    
+                    <div class="relative">
+                        <i class="fa-solid fa-folder absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                        <select class="w-full bg-panel border border-border rounded-lg text-sm text-text-secondary pl-9 pr-8 py-2 focus:outline-none focus:border-primary appearance-none cursor-pointer h-9">
+                            <option>All Entities</option>
+                            <option>Credit Memos</option>
+                            <option>Teasers</option>
+                            <option>Documents</option>
+                            <option>Companies</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="audit-log-table" class="bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
+                        <thead>
+                            <tr class="bg-panel/50 border-b border-border">
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-[180px]">Timestamp</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-[140px]">User</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-[120px]">Action</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-[120px]">Entity</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Details</th>
+                                <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider w-[120px]">Status</th>
+                                <th class="py-3 px-4 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-body">
+                            
+                            <tr class="event-row border-b border-border/50" onclick="toggleEventDetails('event1')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-primary rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">11 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">14:32:18</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-border flex-shrink-0">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-text-primary text-sm">Sarah Chen</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Generated</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Credit Memo</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Project Atlas — Credit Analysis v2</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-text-secondary/10 text-text-secondary border border-text-secondary/20">
+                                        Draft
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event1"></i>
+                                </td>
+                            </tr>
+                            <tr id="event1" class="event-details border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Model</div>
+                                                <div class="text-sm text-text-primary font-mono">UX Pilot Sonnet 4</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Generation Time</div>
+                                                <div class="text-sm text-text-primary font-mono">24.3 seconds</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Token Count</div>
+                                                <div class="text-sm text-text-primary font-mono">12,458 tokens</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Estimated Cost</div>
+                                                <div class="text-sm text-text-primary font-mono">£0.37</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-2">Source Documents</div>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="px-2 py-1 bg-card border border-border rounded text-xs text-text-secondary font-mono">Atlas_Financials_2025.pdf</span>
+                                                <span class="px-2 py-1 bg-card border border-border rounded text-xs text-text-secondary font-mono">Atlas_Management_Accounts.xlsx</span>
+                                                <span class="px-2 py-1 bg-card border border-border rounded text-xs text-text-secondary font-mono">Market_Analysis_Tech_Sector.pdf</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-1">Prompt Used</div>
+                                            <div class="text-sm text-text-secondary bg-background/50 border border-border rounded p-2 font-mono">Generate comprehensive credit analysis for Project Atlas including financial ratios, industry comparables, and risk assessment</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row border-b border-border/50" onclick="toggleEventDetails('event2')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-text-secondary rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">11 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">14:28:45</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                            <i class="fa-solid fa-robot text-primary text-xs"></i>
+                                        </div>
+                                        <span class="text-text-primary text-sm">AI System</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Processed</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Document</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Meridian_Annual_Accounts_2025.pdf — 42 pages, 156 chunks</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Complete
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event2"></i>
+                                </td>
+                            </tr>
+                            <tr id="event2" class="event-details border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">File Size</div>
+                                                <div class="text-sm text-text-primary font-mono">8.4 MB</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Pages Processed</div>
+                                                <div class="text-sm text-text-primary font-mono">42 pages</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Processing Time</div>
+                                                <div class="text-sm text-text-primary font-mono">3m 12s</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-2">Processing Pipeline</div>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center gap-3">
+                                                    <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                                    <span class="text-sm text-text-secondary">PDF Extraction</span>
+                                                    <span class="text-xs text-text-tertiary font-mono ml-auto">1.2s</span>
+                                                </div>
+                                                <div class="flex items-center gap-3">
+                                                    <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                                    <span class="text-sm text-text-secondary">OCR Processing</span>
+                                                    <span class="text-xs text-text-tertiary font-mono ml-auto">42.8s</span>
+                                                </div>
+                                                <div class="flex items-center gap-3">
+                                                    <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                                    <span class="text-sm text-text-secondary">Text Chunking</span>
+                                                    <span class="text-xs text-text-tertiary font-mono ml-auto">0.8s</span>
+                                                </div>
+                                                <div class="flex items-center gap-3">
+                                                    <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                                    <span class="text-sm text-text-secondary">Vector Embedding</span>
+                                                    <span class="text-xs text-text-tertiary font-mono ml-auto">128.4s</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row bg-tableAlt border-b border-border/50" onclick="toggleEventDetails('event3')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-success rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">11 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">13:45:32</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-border flex-shrink-0">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="User" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-text-primary text-sm">James Wright</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Approved</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Teaser</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Project Atlas — Deal Teaser v1</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Approved
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event3"></i>
+                                </td>
+                            </tr>
+                            <tr id="event3" class="event-details bg-tableAlt border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Previous Status</div>
+                                                <div class="text-sm text-text-secondary">Draft</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">New Status</div>
+                                                <div class="text-sm text-success">Approved</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-1">Reviewer Comments</div>
+                                            <div class="text-sm text-text-secondary bg-background/50 border border-border rounded p-2">Excellent work. Financial projections are conservative and well-supported. Minor formatting adjustments made to executive summary. Ready for client distribution.</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row border-b border-border/50" onclick="toggleEventDetails('event4')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-text-secondary rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">11 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">12:10:05</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-border flex-shrink-0">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-text-primary text-sm">Sarah Chen</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Uploaded</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Document</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Hartwell_Management_Accounts_Q4.xlsx — 2.1MB</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Processed
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event4"></i>
+                                </td>
+                            </tr>
+                            <tr id="event4" class="event-details border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">File Type</div>
+                                                <div class="text-sm text-text-primary font-mono">Excel (.xlsx)</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">File Size</div>
+                                                <div class="text-sm text-text-primary font-mono">2.1 MB</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Sheets Detected</div>
+                                                <div class="text-sm text-text-primary font-mono">8 sheets</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-2">File Metadata</div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                                <div class="flex justify-between bg-background/50 border border-border rounded px-2 py-1">
+                                                    <span class="text-text-tertiary">Created</span>
+                                                    <span class="text-text-secondary font-mono">10 Mar 2026</span>
+                                                </div>
+                                                <div class="flex justify-between bg-background/50 border border-border rounded px-2 py-1">
+                                                    <span class="text-text-tertiary">Modified</span>
+                                                    <span class="text-text-secondary font-mono">11 Mar 2026</span>
+                                                </div>
+                                                <div class="flex justify-between bg-background/50 border border-border rounded px-2 py-1">
+                                                    <span class="text-text-tertiary">Author</span>
+                                                    <span class="text-text-secondary">Finance Team</span>
+                                                </div>
+                                                <div class="flex justify-between bg-background/50 border border-border rounded px-2 py-1">
+                                                    <span class="text-text-tertiary">Virus Scan</span>
+                                                    <span class="text-success">Clean</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row bg-tableAlt border-b border-border/50" onclick="toggleEventDetails('event5')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-warning rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">11 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">09:30:12</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                            <i class="fa-solid fa-robot text-primary text-xs"></i>
+                                        </div>
+                                        <span class="text-text-primary text-sm">AI System</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Alert</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Company</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">New filing detected: TechFlow Ltd — Annual Accounts</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                        Info
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event5"></i>
+                                </td>
+                            </tr>
+                            <tr id="event5" class="event-details bg-tableAlt border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Company</div>
+                                                <div class="text-sm text-text-primary">TechFlow Ltd</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Filing Type</div>
+                                                <div class="text-sm text-text-primary">Annual Accounts</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Filing Date</div>
+                                                <div class="text-sm text-text-primary font-mono">08 Mar 2026</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Period End</div>
+                                                <div class="text-sm text-text-primary font-mono">31 Dec 2025</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-1">Alert Reason</div>
+                                            <div class="text-sm text-text-secondary">Company is on your watchlist. Automatic monitoring detected new Companies House filing.</div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="px-3 py-1.5 bg-primary hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors">View Filing</button>
+                                            <button class="px-3 py-1.5 bg-panel border border-border hover:bg-card text-text-primary text-xs font-medium rounded-lg transition-colors">Dismiss</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row border-b border-border/50" onclick="toggleEventDetails('event6')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-text-secondary rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">10 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">17:22:41</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-border flex-shrink-0">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="User" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-text-primary text-sm">James Wright</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Login</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">System</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Successful authentication from London, UK</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                        Success
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event6"></i>
+                                </td>
+                            </tr>
+                            <tr id="event6" class="event-details border-b border-border/30">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">IP Address</div>
+                                                <div class="text-sm text-text-primary font-mono">82.45.123.67</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Location</div>
+                                                <div class="text-sm text-text-primary">London, United Kingdom</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-label text-text-tertiary uppercase mb-1">Device</div>
+                                                <div class="text-sm text-text-primary">Chrome on macOS</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="event-row bg-tableAlt" onclick="toggleEventDetails('event7')">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1 h-10 bg-danger rounded-full -ml-4"></div>
+                                        <div>
+                                            <div class="font-mono text-text-primary tabular-nums text-xs">10 Mar 2026</div>
+                                            <div class="font-mono text-text-tertiary tabular-nums text-[11px]">15:08:19</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                            <i class="fa-solid fa-robot text-primary text-xs"></i>
+                                        </div>
+                                        <span class="text-text-primary text-sm">AI System</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Error</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-text-secondary">Document</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="text-text-primary truncate max-w-md">Failed to process: Corrupted_File_2025.pdf</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-danger/10 text-danger border border-danger/20">
+                                        Failed
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <i class="fa-solid fa-chevron-down text-text-tertiary text-xs transition-transform" id="icon-event7"></i>
+                                </td>
+                            </tr>
+                            <tr id="event7" class="event-details bg-tableAlt">
+                                <td colspan="7" class="px-4 py-0">
+                                    <div class="bg-panel/30 rounded-lg p-4 my-2 space-y-3">
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-1">Error Message</div>
+                                            <div class="text-sm text-danger bg-danger/5 border border-danger/20 rounded p-2 font-mono">PDF structure corrupted. Unable to extract text. File may be password-protected or damaged.</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-label text-text-tertiary uppercase mb-1">Recommended Action</div>
+                                            <div class="text-sm text-text-secondary">Re-upload document in supported format or contact support if issue persists.</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="border-t border-border px-4 py-3 flex items-center justify-between bg-panel/30">
+                    <div class="text-xs text-text-tertiary">
+                        Showing <span class="text-text-primary font-medium">7</span> of <span class="text-text-primary font-medium">2,847</span> events
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-panel border border-border text-text-tertiary hover:text-text-primary hover:bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-medium">1</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card transition-colors text-xs">2</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card transition-colors text-xs">3</button>
+                        <span class="text-text-tertiary text-xs px-2">...</span>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-panel border border-border text-text-secondary hover:text-text-primary hover:bg-card transition-colors text-xs">142</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-panel border border-border text-text-tertiary hover:text-text-primary hover:bg-card transition-colors">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleEventDetails(eventId) {
+            const detailsRow = document.getElementById(eventId);
+            const icon = document.getElementById('icon-' + eventId);
+            
+            detailsRow.classList.toggle('expanded');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+    </script>
+</body>
+</html>

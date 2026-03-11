@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0A0A0F',
+                        panel: '#12121A',
+                        card: '#16161F',
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        text: {
+                            primary: '#F8FAFC',
+                            secondary: '#94A3B8',
+                            tertiary: '#475569'
+                        },
+                        border: '#1E293B',
+                        cardBorder: '#1E1E2E',
+                        tableAlt: '#1A1A24'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        label: ['11px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+                        body: ['14px', { lineHeight: '20px' }],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0F;
+            color: #F8FAFC;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        .wizard-step {
+            display: none;
+        }
+        .wizard-step.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans antialiased text-text-primary bg-background">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-panel border-r border-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
+            <div class="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>FinAI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-house w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-building w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Companies</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-file-lines w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Documents</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-briefcase w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Deals</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-message w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">AI Chat</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-card text-text-primary group transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles text-primary w-5 text-center"></i>
+                <span class="text-sm font-medium">Generate</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-chart-bar w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Comparables</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary group transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center group-hover:text-primary transition-colors"></i>
+                <span class="text-sm">Audit Log</span>
+            </a>
+        </nav>
+
+        <div class="p-3 border-t border-border">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="text-sm">Settings</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <header id="header" class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-text-secondary hover:text-text-primary">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="text-primary font-semibold text-lg tracking-tight lg:hidden">FinAI</div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                <input type="text" placeholder="Search companies, deals, or documents..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all h-9">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">⌘</span>
+                    <span class="text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 bg-background font-mono">K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="text-text-secondary hover:text-text-primary relative transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border border-background"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-border cursor-pointer">
+                    <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" />
+                </div>
+            </div>
+        </header>
+
+        <div id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+            
+            <div id="generateHome">
+                <div class="flex flex-col gap-4 mb-8">
+                    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">Generate</h1>
+                    <p class="text-text-secondary text-sm">AI-powered financial document generation</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div id="dealTeaserCard" class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm hover:border-primary/30 transition-all cursor-pointer group">
+                        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                            <i class="fa-solid fa-file-lines text-primary text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">Deal Teaser</h3>
+                        <p class="text-sm text-text-secondary mb-6 leading-relaxed">Generate an anonymous 1-5 page executive summary for deal marketing</p>
+                        <button onclick="openWizard('teaser')" class="w-full h-10 px-4 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white">
+                            Create Teaser <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div id="creditMemoCard" class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm hover:border-success/30 transition-all cursor-pointer group">
+                        <div class="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center mb-4 group-hover:bg-success/20 transition-colors">
+                            <i class="fa-solid fa-calculator text-success text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">Credit Memo</h3>
+                        <p class="text-sm text-text-secondary mb-6 leading-relaxed">Generate a credit analysis with financial ratios and risk assessment</p>
+                        <button onclick="openWizard('credit')" class="w-full h-10 px-4 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 group-hover:bg-success group-hover:text-white">
+                            Create Memo <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div id="companyProfileCard" class="bg-card border border-cardBorder rounded-xl p-6 shadow-sm hover:border-warning/30 transition-all cursor-pointer group">
+                        <div class="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center mb-4 group-hover:bg-warning/20 transition-colors">
+                            <i class="fa-solid fa-building text-warning text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">Company Profile</h3>
+                        <p class="text-sm text-text-secondary mb-6 leading-relaxed">Generate a comprehensive company research report from public data</p>
+                        <button onclick="openWizard('profile')" class="w-full h-10 px-4 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 group-hover:bg-warning group-hover:text-white">
+                            Create Profile <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="recentGenerations" class="bg-card border border-cardBorder rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-border flex justify-between items-center bg-card">
+                        <h3 class="text-sm font-medium text-text-primary">Recent Generations</h3>
+                        <div class="flex gap-2">
+                            <div class="relative">
+                                <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-xs"></i>
+                                <select class="bg-panel border border-border rounded-lg text-xs text-text-secondary pl-7 pr-6 py-1.5 focus:outline-none focus:border-primary appearance-none cursor-pointer">
+                                    <option>All Types</option>
+                                    <option>Deal Teaser</option>
+                                    <option>Credit Memo</option>
+                                    <option>Company Profile</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-text-tertiary text-[10px] pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-panel/50 border-b border-border">
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Title</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Type</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Company</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Status</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider">Generated</th>
+                                    <th class="py-3 px-4 text-label text-text-tertiary font-medium uppercase tracking-wider text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm font-body">
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-text-primary">Q4 2024 Credit Analysis</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            Credit Memo
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary">Apex Financial Systems</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            Approved
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary text-xs font-mono">2024-03-10 14:32</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="View">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="Edit">
+                                                <i class="fa-solid fa-pen text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-success transition-colors" title="Download PDF">
+                                                <i class="fa-solid fa-file-pdf text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-danger transition-colors" title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-text-primary">Investment Teaser - Project Alpha</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                            Deal Teaser
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary">Nexo Health Tech</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">
+                                            Review
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary text-xs font-mono">2024-03-09 11:15</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="View">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="Edit">
+                                                <i class="fa-solid fa-pen text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-success transition-colors" title="Download PDF">
+                                                <i class="fa-solid fa-file-pdf text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-danger transition-colors" title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-border/50 hover:bg-panel/30 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-text-primary">CloudScale Data - Company Profile</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning border border-warning/20">
+                                            Company Profile
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary">CloudScale Data</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-text-tertiary/10 text-text-tertiary border border-text-tertiary/20">
+                                            Draft
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary text-xs font-mono">2024-03-08 16:45</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="View">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="Edit">
+                                                <i class="fa-solid fa-pen text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-success transition-colors" title="Download PDF">
+                                                <i class="fa-solid fa-file-pdf text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-danger transition-colors" title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="bg-tableAlt hover:bg-panel/30 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-text-primary">Lumina Logistics Assessment</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            Credit Memo
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary">Lumina Logistics</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success border border-success/20">
+                                            Approved
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-text-secondary text-xs font-mono">2024-03-07 09:22</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="View">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-primary transition-colors" title="Edit">
+                                                <i class="fa-solid fa-pen text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-success transition-colors" title="Download PDF">
+                                                <i class="fa-solid fa-file-pdf text-xs"></i>
+                                            </button>
+                                            <button class="text-text-tertiary hover:text-danger transition-colors" title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wizardContainer" class="hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="closeWizard()" class="text-text-secondary hover:text-text-primary transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h1 id="wizardTitle" class="text-2xl font-semibold tracking-tight text-text-primary">Generate Credit Memo</h1>
+                        <p class="text-text-secondary text-sm mt-1">Follow the steps to generate your document</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center mb-8">
+                    <div class="flex items-center gap-2 w-full max-w-3xl">
+                        <div class="flex items-center gap-2 flex-1">
+                            <div id="step1Indicator" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-medium">1</div>
+                            <div class="flex-1 h-0.5 bg-border"></div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-1">
+                            <div id="step2Indicator" class="w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center text-text-tertiary text-xs font-medium">2</div>
+                            <div class="flex-1 h-0.5 bg-border"></div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-1">
+                            <div id="step3Indicator" class="w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center text-text-tertiary text-xs font-medium">3</div>
+                            <div class="flex-1 h-0.5 bg-border"></div>
+                        </div>
+                        <div id="step4Indicator" class="w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center text-text-tertiary text-xs font-medium">4</div>
+                    </div>
+                </div>
+
+                <div id="step1" class="wizard-step active">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-card border border-cardBorder rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4">Select Company</h3>
+                            <p class="text-sm text-text-secondary mb-4">Choose the company for credit analysis</p>
+                            
+                            <div class="relative mb-4">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                                <input type="text" placeholder="Search tracked companies..." class="w-full bg-panel border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all">
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="p-4 bg-panel border border-border rounded-lg hover:border-primary cursor-pointer transition-all group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">A</div>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Apex Financial Systems</div>
+                                                <div class="text-xs text-text-secondary">Fintech • £45.2M Revenue</div>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-text-tertiary group-hover:text-primary transition-colors"></i>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-panel border border-border rounded-lg hover:border-primary cursor-pointer transition-all group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold">N</div>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Nexo Health Tech</div>
+                                                <div class="text-xs text-text-secondary">Healthcare • £112.5M Revenue</div>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-text-tertiary group-hover:text-primary transition-colors"></i>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-panel border border-border rounded-lg hover:border-primary cursor-pointer transition-all group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">C</div>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">CloudScale Data</div>
+                                                <div class="text-xs text-text-secondary">SaaS • £28.4M Revenue</div>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-text-tertiary group-hover:text-primary transition-colors"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-3">
+                            <button onclick="closeWizard()" class="h-10 px-6 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                            <button onclick="nextStep(2)" class="h-10 px-6 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step2" class="wizard-step">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-card border border-cardBorder rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4">Configure Document</h3>
+                            <p class="text-sm text-text-secondary mb-6">Select sections to include in the credit memo</p>
+                            
+                            <div class="space-y-3 mb-6">
+                                <label class="flex items-center gap-3 p-3 bg-panel rounded-lg cursor-pointer hover:bg-panel/80 transition-colors">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary focus:ring-offset-0">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Borrower Profile</div>
+                                        <div class="text-xs text-text-secondary">Company overview, history, and management</div>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3 bg-panel rounded-lg cursor-pointer hover:bg-panel/80 transition-colors">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary focus:ring-offset-0">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Financial Analysis</div>
+                                        <div class="text-xs text-text-secondary">P&L, balance sheet, cash flow analysis</div>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3 bg-panel rounded-lg cursor-pointer hover:bg-panel/80 transition-colors">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary focus:ring-offset-0">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Key Ratios</div>
+                                        <div class="text-xs text-text-secondary">Leverage, coverage, liquidity metrics</div>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3 bg-panel rounded-lg cursor-pointer hover:bg-panel/80 transition-colors">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary focus:ring-offset-0">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Risk Assessment</div>
+                                        <div class="text-xs text-text-secondary">Credit risk, market risk, operational risk</div>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3 bg-panel rounded-lg cursor-pointer hover:bg-panel/80 transition-colors">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary focus:ring-offset-0">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Recommendation</div>
+                                        <div class="text-xs text-text-secondary">Credit opinion and proposed terms</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="border-t border-border pt-6 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Financial Periods</label>
+                                    <select class="w-full bg-panel border border-border rounded-lg text-sm text-text-primary px-3 py-2 focus:outline-none focus:border-primary">
+                                        <option>Last 3 years (2021-2023)</option>
+                                        <option>Last 5 years (2019-2023)</option>
+                                        <option>Custom range</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Comparable Companies</label>
+                                    <div class="relative">
+                                        <input type="text" placeholder="Search and select comparables..." class="w-full bg-panel border border-border rounded-lg pl-3 pr-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-all">
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full border border-primary/20">
+                                            PayTech Solutions <i class="fa-solid fa-xmark cursor-pointer hover:text-primary/70"></i>
+                                        </span>
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full border border-primary/20">
+                                            FinCore Systems <i class="fa-solid fa-xmark cursor-pointer hover:text-primary/70"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <button onclick="prevStep(1)" class="h-10 px-6 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                Back
+                            </button>
+                            <button onclick="nextStep(3)" class="h-10 px-6 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step3" class="wizard-step">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-card border border-cardBorder rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4">Review Sources</h3>
+                            <p class="text-sm text-text-secondary mb-6">Documents and data that will be used for generation</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="p-4 bg-panel rounded-lg border border-border">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-file-pdf text-danger mt-1"></i>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">FY2023_Financial_Statements.pdf</div>
+                                                <div class="text-xs text-text-secondary mt-0.5">Uploaded 2024-01-15 • 2.4 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-success font-medium">98% Relevant</span>
+                                            <div class="w-16 h-1 bg-panel rounded-full overflow-hidden">
+                                                <div class="bg-success h-full" style="width: 98%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-panel rounded-lg border border-border">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-file-excel text-success mt-1"></i>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Q4_2023_Management_Accounts.xlsx</div>
+                                                <div class="text-xs text-text-secondary mt-0.5">Uploaded 2024-02-10 • 1.8 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-success font-medium">95% Relevant</span>
+                                            <div class="w-16 h-1 bg-panel rounded-full overflow-hidden">
+                                                <div class="bg-success h-full" style="width: 95%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-panel rounded-lg border border-border">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-file-lines text-primary mt-1"></i>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Board_Presentation_Dec_2023.pdf</div>
+                                                <div class="text-xs text-text-secondary mt-0.5">Uploaded 2024-01-05 • 4.2 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-warning font-medium">72% Relevant</span>
+                                            <div class="w-16 h-1 bg-panel rounded-full overflow-hidden">
+                                                <div class="bg-warning h-full" style="width: 72%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-panel rounded-lg border border-border">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-globe text-primary mt-1"></i>
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Companies House Data</div>
+                                                <div class="text-xs text-text-secondary mt-0.5">Public records • Last updated 2024-02-28</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-success font-medium">100% Verified</span>
+                                            <div class="w-16 h-1 bg-panel rounded-full overflow-hidden">
+                                                <div class="bg-success h-full" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="w-full h-10 px-4 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 border border-dashed border-border">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                Add more sources
+                            </button>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <button onclick="prevStep(2)" class="h-10 px-6 bg-panel hover:bg-border text-text-primary text-sm font-medium rounded-lg transition-colors">
+                                Back
+                            </button>
+                            <button onclick="nextStep(4)" class="h-10 px-6 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+                                Generate Document
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step4" class="wizard-step">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-card border border-cardBorder rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary mb-4">Generating Document</h3>
+                            <p class="text-sm text-text-secondary mb-6">AI is analyzing sources and creating your credit memo</p>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                                        <i class="fa-solid fa-check text-success text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Extracting financial data</div>
+                                        <div class="w-full h-1 bg-panel rounded-full overflow-hidden mt-1">
+                                            <div class="bg-success h-full rounded-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                                        <i class="fa-solid fa-check text-success text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Calculating ratios</div>
+                                        <div class="w-full h-1 bg-panel rounded-full overflow-hidden mt-1">
+                                            <div class="bg-success h-full rounded-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                        <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-primary">Drafting narrative</div>
+                                        <div class="w-full h-1 bg-panel rounded-full overflow-hidden mt-1">
+                                            <div class="bg-primary h-full rounded-full animate-pulse" style="width: 65%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center">
+                                        <div class="w-2 h-2 rounded-full bg-text-tertiary"></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-tertiary">Validating sources</div>
+                                        <div class="w-full h-1 bg-panel rounded-full overflow-hidden mt-1">
+                                            <div class="bg-border h-full rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center">
+                                        <div class="w-2 h-2 rounded-full bg-text-tertiary"></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-text-tertiary">Finalizing document</div>
+                                        <div class="w-full h-1 bg-panel rounded-full overflow-hidden mt-1">
+                                            <div class="bg-border h-full rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 p-4 bg-panel rounded-lg border border-border">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-circle-info text-primary mt-0.5"></i>
+                                    <div>
+                                        <div class="text-sm font-medium text-text-primary mb-1">Generation in progress</div>
+                                        <div class="text-xs text-text-secondary">This typically takes 2-3 minutes. You can leave this page and we'll notify you when it's ready.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button onclick="showPreview()" class="h-10 px-6 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                                View Preview (Demo)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="previewSection" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-card border border-cardBorder rounded-xl p-6 shadow-sm">
+                            <div class="bg-white text-gray-900 p-8 rounded-lg min-h-[600px]">
+                                <div class="border-b border-gray-300 pb-4 mb-6">
+                                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Credit Memorandum</h1>
+                                    <div class="text-sm text-gray-600">
+                                        <div>Borrower: Apex Financial Systems Ltd</div>
+                                        <div>Date: 11 March 2024</div>
+                                        <div>Analyst: FinAI Platform</div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6">
+                                    <h2 class="text-lg font-semibold text-gray-900 mb-3">Executive Summary</h2>
+                                    <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                        Apex Financial Systems Ltd is a UK-based fintech company specializing in payment processing solutions for SMEs. The company has demonstrated strong revenue growth of 24% YoY, reaching £45.2M in FY2023, with improving profitability metrics.
+                                    </p>
+                                    <p class="text-sm text-gray-700 leading-relaxed">
+                                        The proposed facility is a £15M senior term loan with a 5-year maturity. Based on our analysis, we recommend approval with standard covenants.
+                                    </p>
+                                </div>
+
+                                <div class="mb-6">
+                                    <h2 class="text-lg font-semibold text-gray-900 mb-3">Financial Highlights</h2>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                                            <div class="text-xs text-gray-600 mb-1">Revenue (FY2023)</div>
+                                            <div class="text-lg font-mono font-semibold text-gray-900">£45.2M</div>
+                                            <div class="text-xs text-green-600">+24% YoY</div>
+                                        </div>
+                                        <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                                            <div class="text-xs text-gray-600 mb-1">EBITDA</div>
+                                            <div class="text-lg font-mono font-semibold text-gray-900">£8.4M</div>
+                                            <div class="text-xs text-green-600">18.6% margin</div>
+                                        </div>
+                                        <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                                            <div class="text-xs text-gray-600 mb-1">Net Debt / EBITDA</div>
+                                            <div class="text-lg font-mono font-semibold text-gray-900">2.1x</div>
+                                        </div>
+                                        <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                                            <div class="text-xs text-gray-600 mb-1">Interest Coverage</div>
+                                            <div class="text-lg font-mono font-semibold text-gray-900">5.2x</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6">
+                                    <h2 class="text-lg font-semibold text-gray-900 mb-3">Key Ratios</h2>
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="border-b border-gray-300">
+                                                <th class="text-left py-2 text-gray-700 font-medium">Metric</th>
+                                                <th class="text-right py-2 text-gray-700 font-medium">FY2023</th>
+                                                <th class="text-right py-2 text-gray-700 font-medium">FY2022</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-gray-600">
+                                            <tr class="border-b border-gray-200">
+                                                <td class="py-2">Current Ratio</td>
+                                                <td class="text-right font-mono">1.8x</td>
+                                                <td class="text-right font-mono">1.6x</td>
+                                            </tr>
+                                            <tr class="border-b border-gray-200">
+                                                <td class="py-2">Quick Ratio</td>
+                                                <td class="text-right font-mono">1.4x</td>
+                                                <td class="text-right font-mono">1.2x</td>
+                                            </tr>
+                                            <tr class="border-b border-gray-200">
+                                                <td class="py-2">ROE</td>
+                                                <td class="text-right font-mono">18.2%</td>
+                                                <td class="text-right font-mono">15.4%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900 mb-3">Recommendation</h2>
+                                    <div class="p-4 bg-green-50 border border-green-200 rounded">
+                                        <div class="text-sm font-semibold text-green-900 mb-2">APPROVE</div>
+                                        <p class="text-sm text-green-800">
+                                            Strong financial performance, improving credit metrics, and experienced management team support approval of the proposed facility.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Edit Sections</h3>
+                                <div class="space-y-2">
+                                    <button class="w-full text-left p-3 bg-panel hover:bg-panel/80 rounded-lg text-sm text-text-primary transition-colors flex items-center justify-between group">
+                                        <span>Executive Summary</span>
+                                        <i class="fa-solid fa-pen text-text-tertiary group-hover:text-primary text-xs"></i>
+                                    </button>
+                                    <button class="w-full text-left p-3 bg-panel hover:bg-panel/80 rounded-lg text-sm text-text-primary transition-colors flex items-center justify-between group">
+                                        <span>Financial Analysis</span>
+                                        <i class="fa-solid fa-pen text-text-tertiary group-hover:text-primary text-xs"></i>
+                                    </button>
+                                    <button class="w-full text-left p-3 bg-panel hover:bg-panel/80 rounded-lg text-sm text-text-primary transition-colors flex items-center justify-between group">
+                                        <span>Risk Assessment</span>
+                                        <i class="fa-solid fa-pen text-text-tertiary group-hover:text-primary text-xs"></i>
+                                    </button>
+                                    <button class="w-full text-left p-3 bg-panel hover:bg-panel/80 rounded-lg text-sm text-text-primary transition-colors flex items-center justify-between group">
+                                        <span>Recommendation</span>
+                                        <i class="fa-solid fa-pen text-text-tertiary group-hover:text-primary text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+                                <h3 class="text-sm font-medium text-text-primary mb-4">Source Attribution</h3>
+                                <div class="space-y-3 text-xs">
+                                    <div class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check-circle text-success mt-0.5"></i>
+                                        <div>
+                                            <div class="text-text-primary">All financial data verified</div>
+                                            <div class="text-text-tertiary">4 sources cross-referenced</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check-circle text-success mt-0.5"></i>
+                                        <div>
+                                            <div class="text-text-primary">Ratios calculated correctly</div>
+                                            <div class="text-text-tertiary">Validated against standards</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <i class="fa-solid fa-info-circle text-primary mt-0.5"></i>
+                                        <div>
+                                            <div class="text-text-primary">Public records current</div>
+                                            <div class="text-text-tertiary">Last updated 28 Feb 2024</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <button class="w-full h-10 px-4 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                                    <i class="fa-solid fa-check mr-2"></i>Approve Document
+                                </button>
+                                <button class="w-full h-10 px-4 bg-warning hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors">
+                                    <i class="fa-solid fa-comment mr-2"></i>Request Changes
+                                </button>
+                                <button class="w-full h-10 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors">
+                                    <i class="fa-solid fa-download mr-2"></i>Download PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function openWizard(type) {
+            document.getElementById('generateHome').classList.add('hidden');
+            document.getElementById('wizardContainer').classList.remove('hidden');
+            
+            const titles = {
+                'teaser': 'Generate Deal Teaser',
+                'credit': 'Generate Credit Memo',
+                'profile': 'Generate Company Profile'
+            };
+            document.getElementById('wizardTitle').textContent = titles[type] || 'Generate Document';
+            
+            document.getElementById('step1').classList.add('active');
+            updateStepIndicator(1);
+        }
+
+        function closeWizard() {
+            document.getElementById('wizardContainer').classList.add('hidden');
+            document.getElementById('generateHome').classList.remove('hidden');
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('previewSection').classList.add('hidden');
+        }
+
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+            updateStepIndicator(stepNumber);
+        }
+
+        function prevStep(stepNumber) {
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+            updateStepIndicator(stepNumber);
+        }
+
+        function updateStepIndicator(activeStep) {
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById('step' + i + 'Indicator');
+                if (i < activeStep) {
+                    indicator.className = 'w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-xs font-medium';
+                    indicator.innerHTML = '<i class="fa-solid fa-check text-sm"></i>';
+                } else if (i === activeStep) {
+                    indicator.className = 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-medium';
+                    indicator.textContent = i;
+                } else {
+                    indicator.className = 'w-8 h-8 rounded-full bg-panel border border-border flex items-center justify-center text-text-tertiary text-xs font-medium';
+                    indicator.textContent = i;
+                }
+            }
+        }
+
+        function showPreview() {
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('previewSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
