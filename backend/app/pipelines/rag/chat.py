@@ -12,12 +12,10 @@ Design principles (enforced by CLAUDE.md):
 from __future__ import annotations
 
 import logging
-import uuid
 from typing import Any
 
-import anthropic
-
 from app.core.config import get_settings
+from app.core.llm_client import llm_complete
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +85,7 @@ class RAGChat:
 
     Usage::
 
-        chat = RAGChat(api_key=settings.anthropic_api_key)
+        chat = RAGChat()
         response = await chat.answer(
             message="What was EBITDA for FY2023?",
             retrieved_chunks=chunks,
@@ -95,9 +93,7 @@ class RAGChat:
         )
     """
 
-    def __init__(self, api_key: str) -> None:
-        self._api_key = api_key
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
+    def __init__(self) -> None:
         self._settings = get_settings()
 
     async def answer(
@@ -105,53 +101,30 @@ class RAGChat:
         message: str,
         retrieved_chunks: list[dict[str, Any]],
         conversation_history: list[dict[str, str]] | None = None,
-        api_key: str | None = None,
     ) -> dict[str, Any]:
         """
         Generate a grounded answer for the user's query.
 
-        Args:
-            message:              The user's question.
-            retrieved_chunks:     Top-k chunks from RAGRetriever.retrieve().
-            conversation_history: List of {"role": "user"|"assistant", "content": str}
-                                  for multi-turn context.
-            api_key:              Override API key (uses constructor key if None).
-
         Returns:
             {
                 "answer": str,
-                "sources": [
-                    {
-                        "doc_name": str,
-                        "page": int | None,
-                        "excerpt": str,
-                        "chunk_id": UUID | None,
-                        "document_id": UUID | None,
-                        "relevance_score": float,
-                    }
-                ],
+                "sources": [...],
                 "confidence": "high" | "medium" | "low",
                 "model_used": str,
                 "prompt_tokens": int,
                 "completion_tokens": int,
             }
         """
-        client = self._client
-        if api_key:
-            client = anthropic.AsyncAnthropic(api_key=api_key)
-
         context_block = _build_context_block(retrieved_chunks)
         confidence = _determine_confidence(retrieved_chunks)
 
         # Build conversation messages
         messages: list[dict[str, str]] = []
 
-        # Inject historical turns if provided
         if conversation_history:
-            for turn in conversation_history[-6:]:  # Last 3 exchanges = 6 messages
+            for turn in conversation_history[-6:]:
                 messages.append({"role": turn["role"], "content": turn["content"]})
 
-        # Current user message with context injected
         user_content = f"{context_block}\n\n=== USER QUESTION ===\n{message}"
         messages.append({"role": "user", "content": user_content})
 
@@ -164,15 +137,12 @@ class RAGChat:
             },
         )
 
-        response = await client.messages.create(
-            model=self._settings.llm_model,
-            max_tokens=_MAX_TOKENS,
-            temperature=self._settings.llm_temperature,
+        result = await llm_complete(
             system=_SYSTEM_PROMPT,
             messages=messages,
+            max_tokens=_MAX_TOKENS,
+            temperature=self._settings.llm_temperature,
         )
-
-        answer_text = response.content[0].text.strip()
 
         # Build source citations from retrieved chunks
         sources = []
@@ -190,10 +160,10 @@ class RAGChat:
             )
 
         return {
-            "answer": answer_text,
+            "answer": result["text"],
             "sources": sources,
             "confidence": confidence,
-            "model_used": self._settings.llm_model,
-            "prompt_tokens": response.usage.input_tokens,
-            "completion_tokens": response.usage.output_tokens,
+            "model_used": result["model_used"],
+            "prompt_tokens": result["prompt_tokens"],
+            "completion_tokens": result["completion_tokens"],
         }

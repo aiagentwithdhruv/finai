@@ -18,9 +18,8 @@ import logging
 import random
 from typing import Any
 
-import anthropic
-
 from app.core.config import get_settings
+from app.core.llm_client import llm_complete
 
 logger = logging.getLogger(__name__)
 
@@ -75,9 +74,7 @@ class TeaserGenerator:
         )
     """
 
-    def __init__(self, api_key: str) -> None:
-        self._api_key = api_key
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
+    def __init__(self) -> None:
         self._settings = get_settings()
 
     async def generate(
@@ -145,29 +142,24 @@ class TeaserGenerator:
             anonymize=anonymize,
         )
 
-        response = await self._client.messages.create(
-            model=self._settings.llm_model,
-            max_tokens=_MAX_TOKENS,
-            temperature=0.4,
+        result = await llm_complete(
             system=_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": context}],
+            max_tokens=_MAX_TOKENS,
+            temperature=0.4,
         )
 
-        raw_text = response.content[0].text.strip()
-        sections = self._parse_sections(raw_text)
-
-        prompt_tokens = response.usage.input_tokens
-        completion_tokens = response.usage.output_tokens
-        cost_usd = (prompt_tokens * 0.000003) + (completion_tokens * 0.000015)
+        sections = self._parse_sections(result["text"])
+        cost_usd = (result["prompt_tokens"] * 0.000003) + (result["completion_tokens"] * 0.000015)
 
         return {
             "display_name": display_name,
             "codename": codename,
             "sections": sections,
             "financial_summary": financial_summary,
-            "model_used": self._settings.llm_model,
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
+            "model_used": result["model_used"],
+            "prompt_tokens": result["prompt_tokens"],
+            "completion_tokens": result["completion_tokens"],
             "generation_cost_usd": round(cost_usd, 6),
         }
 

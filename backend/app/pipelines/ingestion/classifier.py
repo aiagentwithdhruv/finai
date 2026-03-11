@@ -1,7 +1,7 @@
 """
 Document type classifier.
 
-Uses Claude Haiku (via Anthropic SDK) to classify financial documents into
+Uses the configured classifier model to classify financial documents into
 one of several predefined categories. Fast, cheap, and accurate for this task.
 """
 
@@ -11,7 +11,8 @@ import json
 import logging
 from typing import Any
 
-import anthropic
+from app.core.config import get_settings
+from app.core.llm_client import llm_complete
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,6 @@ DOCUMENT_TYPES = [
     "presentation",
     "other",
 ]
-
-_MODEL = "claude-haiku-4-5"
 
 _SYSTEM_PROMPT = """You are a financial document classification expert at a UK advisory firm.
 Classify documents into exactly one of these types:
@@ -43,7 +42,6 @@ Respond ONLY with a JSON object: {"doc_type": "<type>", "confidence": <0.0-1.0>,
 
 async def classify_document(
     text_sample: str,
-    api_key: str,
 ) -> dict[str, Any]:
     """
     Classify a financial document by its text content.
@@ -51,12 +49,11 @@ async def classify_document(
     Args:
         text_sample: A representative text sample from the document
                      (typically first 2000 characters or first few pages).
-        api_key: Anthropic API key.
 
     Returns:
         {
             "doc_type": str,      # one of DOCUMENT_TYPES
-            "confidence": float,  # 0.0–1.0
+            "confidence": float,  # 0.0-1.0
             "reasoning": str,     # brief explanation
         }
 
@@ -65,15 +62,12 @@ async def classify_document(
     if not text_sample or not text_sample.strip():
         return {"doc_type": "other", "confidence": 0.0, "reasoning": "Empty document"}
 
-    # Truncate to avoid token waste — 2000 chars is sufficient for classification
     sample = text_sample[:2000].strip()
-
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    settings = get_settings()
 
     try:
-        message = await client.messages.create(
-            model=_MODEL,
-            max_tokens=256,
+        llm_result = await llm_complete(
+            model=settings.classifier_model,
             system=_SYSTEM_PROMPT,
             messages=[
                 {
@@ -81,9 +75,11 @@ async def classify_document(
                     "content": f"Classify this financial document:\n\n{sample}",
                 }
             ],
+            max_tokens=256,
+            temperature=0.0,
         )
 
-        raw_text = message.content[0].text.strip()
+        raw_text = llm_result["text"]
 
         # Strip markdown code fences if present
         if raw_text.startswith("```"):

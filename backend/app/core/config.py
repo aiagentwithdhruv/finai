@@ -8,7 +8,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, PostgresDsn, AnyHttpUrl, field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,11 +21,11 @@ class Settings(BaseSettings):
     )
 
     # ------------------------------------------------------------------
-    # Supabase
+    # Supabase (optional for local dev — uses Docker PostgreSQL instead)
     # ------------------------------------------------------------------
-    supabase_url: AnyHttpUrl = Field(..., description="Supabase project URL")
-    supabase_anon_key: str = Field(..., description="Supabase anon/public key")
-    supabase_service_key: str = Field(..., description="Supabase service role key (server-side only)")
+    supabase_url: str = Field(default="", description="Supabase project URL (optional for local dev)")
+    supabase_anon_key: str = Field(default="", description="Supabase anon/public key (optional for local dev)")
+    supabase_service_key: str = Field(default="", description="Supabase service role key (optional for local dev)")
 
     # ------------------------------------------------------------------
     # Database — asyncpg-compatible URL
@@ -41,22 +41,20 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     # LLM providers
     # ------------------------------------------------------------------
-    anthropic_api_key: str = Field(..., description="Anthropic API key for Claude models")
-    openai_api_key: str = Field(..., description="OpenAI API key for GPT-4o + embeddings")
-    xai_api_key: str = Field(default="", description="xAI API key for Grok models (optional)")
-    moonshot_api_key: str = Field(default="", description="Moonshot API key for Kimi models (optional)")
+    openrouter_api_key: str = Field(..., description="OpenRouter API key — one key for ALL models (openrouter.ai/keys)")
+    openai_api_key: str = Field(default="", description="OpenAI API key for embeddings (optional — OpenRouter can also embed)")
 
     # ------------------------------------------------------------------
     # Model selection — configurable per-deployment via env vars
     # ------------------------------------------------------------------
     llm_model: str = Field(
-        default="claude-sonnet-4-6",
-        description="Primary LLM for RAG chat & generation (claude-sonnet-4-6 | grok-4-1-fast-reasoning | kimi-k2.5)",
+        default="grok-4-1-fast-reasoning",
+        description="Primary LLM for RAG chat & generation (grok-4-1-fast-reasoning | claude-sonnet-4-6 | kimi-k2.5)",
     )
     llm_temperature: float = Field(default=0.2, description="Default temperature for RAG chat")
     classifier_model: str = Field(
-        default="claude-haiku-4-5-20251001",
-        description="Lightweight model for document classification",
+        default="grok-4-1-fast-non-reasoning",
+        description="Lightweight model for document classification (grok-4-1-fast-non-reasoning | claude-haiku-4-5-20251001)",
     )
     embedding_model: str = Field(
         default="text-embedding-3-small",
@@ -66,12 +64,12 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     # External data sources
     # ------------------------------------------------------------------
-    companies_house_api_key: str = Field(..., description="UK Companies House REST API key")
+    companies_house_api_key: str = Field(default="", description="UK Companies House REST API key (free — register at developer.company-information.service.gov.uk)")
     alpha_vantage_api_key: str = Field(
         default="",
         description="Alpha Vantage API key (optional — yfinance used as primary)",
     )
-    fred_api_key: str = Field(..., description="FRED (Federal Reserve) macroeconomic data API key")
+    fred_api_key: str = Field(default="", description="FRED macroeconomic data API key (free — register at fred.stlouisfed.org)")
 
     # ------------------------------------------------------------------
     # Observability
