@@ -41,8 +41,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     # LLM providers
     # ------------------------------------------------------------------
-    openrouter_api_key: str = Field(..., description="OpenRouter API key — one key for ALL models (openrouter.ai/keys)")
-    openai_api_key: str = Field(default="", description="OpenAI API key for embeddings (optional — OpenRouter can also embed)")
+    openrouter_api_key: str = Field(..., description="OpenRouter API key — one key for ALL models including embeddings (openrouter.ai/keys)")
 
     # ------------------------------------------------------------------
     # Model selection — configurable per-deployment via env vars
