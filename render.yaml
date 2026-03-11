@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: finai-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: '["https://finai.aiwithdhruv.com","http://localhost:3000","http://localhost:3001"]'
+    healthCheckPath: /api/v1/health
