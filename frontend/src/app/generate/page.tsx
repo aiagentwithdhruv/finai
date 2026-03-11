@@ -82,6 +82,35 @@ function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+function MaterialSections({ content }: { content: Record<string, unknown> | null }) {
+  if (!content || typeof content !== 'object') return null
+  const sections = (content.sections ?? content) as Record<string, unknown>
+  const entries = Object.entries(sections).filter((e): e is [string, string] => typeof e[1] === 'string')
+  const cost = content.generation_cost_usd as number | undefined
+  return (
+    <>
+      {entries.length > 0 && (
+        <div className="space-y-4">
+          {entries.map(([key, value]) => {
+            const title = key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+            return (
+              <div key={key} className="bg-[#12121A] border border-[#1E293B] rounded-lg p-4">
+                <h4 className="text-xs font-semibold text-[#3B82F6] uppercase tracking-wider mb-2">{title}</h4>
+                <p className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-wrap">{value}</p>
+              </div>
+            )
+          })}
+        </div>
+      )}
+      {cost != null && (
+        <div className="text-xs text-[#475569] font-mono text-right">
+          Generation cost: ${cost.toFixed(4)}
+        </div>
+      )}
+    </>
+  )
+}
+
 export default function GeneratePage() {
   const [activeModal, setActiveModal] = useState<'credit' | 'teaser' | null>(null)
 
@@ -557,31 +586,7 @@ export default function GeneratePage() {
               </div>
 
               {/* Sections content */}
-              {viewingMaterial.content && typeof viewingMaterial.content === 'object' && (
-                <div className="space-y-4">
-                  {(() => {
-                    const content = viewingMaterial.content as Record<string, unknown>
-                    const sections = (content.sections ?? content) as Record<string, unknown>
-                    return Object.entries(sections).map(([key, value]) => {
-                      if (typeof value !== 'string') return null
-                      const title = key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-                      return (
-                        <div key={key} className="bg-[#12121A] border border-[#1E293B] rounded-lg p-4">
-                          <h4 className="text-xs font-semibold text-[#3B82F6] uppercase tracking-wider mb-2">{title}</h4>
-                          <p className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-wrap">{value}</p>
-                        </div>
-                      )
-                    })
-                  })()}
-                </div>
-              )}
-
-              {/* Cost info if available */}
-              {viewingMaterial.content && (viewingMaterial.content as Record<string, unknown>).generation_cost_usd && (
-                <div className="text-xs text-[#475569] font-mono text-right">
-                  Generation cost: ${((viewingMaterial.content as Record<string, unknown>).generation_cost_usd as number).toFixed(4)}
-                </div>
-              )}
+              <MaterialSections content={viewingMaterial.content} />
             </div>
 
             <div className="px-6 py-4 border-t border-[#1E293B] flex-shrink-0">
