@@ -100,7 +100,7 @@ async def refresh_all_comparables(
 # DELETE /comps/{id} — remove
 # ------------------------------------------------------------------
 
-@router.delete("/{comparable_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{comparable_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_comparable(
     comparable_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),

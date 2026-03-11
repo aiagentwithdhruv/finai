@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import AppShell from '@/components/AppShell'
 import Badge from '@/components/Badge'
 import {
@@ -18,169 +18,89 @@ import {
   Trash2,
   MessageSquare,
   ChevronRight,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react'
+import { api } from '@/lib/api'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type DocStatus = 'pending' | 'processing' | 'processed' | 'failed'
-type DocType =
-  | 'Annual Report'
-  | 'Credit Memo'
-  | 'Financial Statement'
-  | 'Pitch Deck'
-  | 'NDA'
-  | 'Due Diligence'
-  | 'Valuation Model'
-  | 'Term Sheet'
-type FileFormat = 'pdf' | 'xlsx' | 'docx'
+type DocStatus = 'pending' | 'classifying' | 'parsing' | 'chunking' | 'embedding' | 'completed' | 'failed'
+
+interface ApiDocument {
+  id: string
+  company_id: string | null
+  deal_id: string | null
+  filename: string
+  file_path: string | null
+  mime_type: string | null
+  file_size_bytes: number | null
+  document_type: string | null
+  status: DocStatus
+  page_count: number | null
+  chunk_count: number | null
+  source_url: string | null
+  period_start: string | null
+  period_end: string | null
+  error_message: string | null
+  created_at: string
+  updated_at: string
+}
 
 interface Document {
   id: string
   filename: string
-  type: DocType
-  format: FileFormat
+  type: string
+  format: string
   status: DocStatus
   pages: number
   chunks: number
-  uploadedBy: string
-  company: string
   date: string
   size: string
+  companyId: string | null
+  errorMessage: string | null
 }
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
+function formatBytes(bytes: number | null): string {
+  if (!bytes) return '—'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / 1048576).toFixed(1)} MB`
+}
 
-const DOCUMENTS: Document[] = [
-  {
-    id: '1',
-    filename: 'Meridian_Annual_Report_FY2025.pdf',
-    type: 'Annual Report',
-    format: 'pdf',
-    status: 'processed',
-    pages: 148,
-    chunks: 312,
-    uploadedBy: 'J. Wilson',
-    company: 'Meridian Technology Solutions',
-    date: '15 Jan 2026',
-    size: '4.2 MB',
-  },
-  {
-    id: '2',
-    filename: 'Q3_Management_Accounts_Apex.xlsx',
-    type: 'Financial Statement',
-    format: 'xlsx',
-    status: 'processing',
-    pages: 28,
-    chunks: 0,
-    uploadedBy: 'S. Reynolds',
-    company: 'Apex Financial Partners',
-    date: '14 Jan 2026',
-    size: '2.1 MB',
-  },
-  {
-    id: '3',
-    filename: 'CloudScale_Credit_Agreement_2025.pdf',
-    type: 'Credit Memo',
-    format: 'pdf',
-    status: 'processed',
-    pages: 56,
-    chunks: 98,
-    uploadedBy: 'P. Hughes',
-    company: 'CloudScale Infrastructure',
-    date: '13 Jan 2026',
-    size: '4.7 MB',
-  },
-  {
-    id: '4',
-    filename: 'Nexo_Health_Pitch_Deck_Q4.pdf',
-    type: 'Pitch Deck',
-    format: 'pdf',
-    status: 'failed',
-    pages: 0,
-    chunks: 0,
-    uploadedBy: 'A. Morris',
-    company: 'Nexo Health Technologies',
-    date: '12 Jan 2026',
-    size: '12.3 MB',
-  },
-  {
-    id: '5',
-    filename: 'Hartwell_NDA_Executed.pdf',
-    type: 'NDA',
-    format: 'pdf',
-    status: 'processed',
-    pages: 12,
-    chunks: 22,
-    uploadedBy: 'T. Kapoor',
-    company: 'Hartwell Capital Group',
-    date: '10 Jan 2026',
-    size: '1.8 MB',
-  },
-  {
-    id: '6',
-    filename: 'Vantage_DD_Report_Draft.docx',
-    type: 'Due Diligence',
-    format: 'docx',
-    status: 'processed',
-    pages: 94,
-    chunks: 187,
-    uploadedBy: 'R. Blackwell',
-    company: 'Vantage Analytics Corp',
-    date: '09 Jan 2026',
-    size: '3.2 MB',
-  },
-  {
-    id: '7',
-    filename: 'Sterling_Valuation_Model_v3.xlsx',
-    type: 'Valuation Model',
-    format: 'xlsx',
-    status: 'processing',
-    pages: 15,
-    chunks: 0,
-    uploadedBy: 'C. Lane',
-    company: 'Sterling Logistics Holdings',
-    date: '08 Jan 2026',
-    size: '5.6 MB',
-  },
-  {
-    id: '8',
-    filename: 'Blackwood_Term_Sheet_Series_B.pdf',
-    type: 'Term Sheet',
-    format: 'pdf',
-    status: 'pending',
-    pages: 8,
-    chunks: 0,
-    uploadedBy: 'N. Marsh',
-    company: 'Blackwood Renewables',
-    date: '07 Jan 2026',
-    size: '0.9 MB',
-  },
-]
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+}
 
-const DOC_TYPE_OPTIONS: Array<DocType | 'All Types'> = [
-  'All Types',
-  'Annual Report',
-  'Financial Statement',
-  'Credit Memo',
-  'Pitch Deck',
-  'NDA',
-  'Due Diligence',
-  'Valuation Model',
-  'Term Sheet',
-]
+function getFormat(filename: string, mime: string | null): string {
+  const ext = filename.split('.').pop()?.toLowerCase()
+  if (ext === 'pdf' || mime?.includes('pdf')) return 'pdf'
+  if (ext === 'xlsx' || ext === 'xls' || mime?.includes('spreadsheet')) return 'xlsx'
+  if (ext === 'docx' || ext === 'doc' || mime?.includes('word')) return 'docx'
+  if (ext === 'csv') return 'csv'
+  return ext || 'other'
+}
 
-const STATUS_OPTIONS: Array<DocStatus | 'All Statuses'> = [
-  'All Statuses',
-  'pending',
-  'processing',
-  'processed',
-  'failed',
-]
+function mapDocument(d: ApiDocument): Document {
+  return {
+    id: d.id,
+    filename: d.filename,
+    type: d.document_type?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Other',
+    format: getFormat(d.filename, d.mime_type),
+    status: d.status,
+    pages: d.page_count || 0,
+    chunks: d.chunk_count || 0,
+    date: formatDate(d.created_at),
+    size: formatBytes(d.file_size_bytes),
+    companyId: d.company_id,
+    errorMessage: d.error_message,
+  }
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function FileIcon({ format }: { format: FileFormat }) {
-  if (format === 'xlsx') {
+function FileIcon_({ format }: { format: string }) {
+  if (format === 'xlsx' || format === 'csv') {
     return (
       <div className="w-8 h-10 bg-[#10B981]/10 border border-[#10B981]/20 rounded flex items-center justify-center flex-shrink-0">
         <FileSpreadsheet className="w-4 h-4 text-[#10B981]" />
@@ -202,22 +122,22 @@ function FileIcon({ format }: { format: FileFormat }) {
 }
 
 function StatusCell({ status }: { status: DocStatus }) {
-  if (status === 'processed') {
+  if (status === 'completed') {
     return (
       <span className="inline-flex items-center gap-1.5 text-[#10B981] text-xs">
         <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full" />
-        Processed
+        Completed
       </span>
     )
   }
-  if (status === 'processing') {
+  if (['classifying', 'parsing', 'chunking', 'embedding'].includes(status)) {
     return (
       <span className="inline-flex items-center gap-1.5 text-[#F59E0B] text-xs">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F59E0B] opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F59E0B]" />
         </span>
-        Processing
+        {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     )
   }
@@ -237,17 +157,13 @@ function StatusCell({ status }: { status: DocStatus }) {
   )
 }
 
-function docTypeBadgeVariant(type: DocType): 'blue' | 'green' | 'amber' | 'purple' | 'gray' | 'red' {
-  switch (type) {
-    case 'Annual Report':      return 'blue'
-    case 'Financial Statement': return 'blue'
-    case 'Credit Memo':        return 'amber'
-    case 'Pitch Deck':         return 'purple'
-    case 'NDA':                return 'green'
-    case 'Due Diligence':      return 'amber'
-    case 'Valuation Model':    return 'green'
-    case 'Term Sheet':         return 'gray'
-  }
+function typeBadgeVariant(type: string): 'blue' | 'green' | 'amber' | 'purple' | 'gray' {
+  const t = type.toLowerCase()
+  if (t.includes('financial') || t.includes('annual') || t.includes('xbrl')) return 'blue'
+  if (t.includes('credit') || t.includes('due')) return 'amber'
+  if (t.includes('teaser') || t.includes('cim')) return 'purple'
+  if (t.includes('legal') || t.includes('nda')) return 'green'
+  return 'gray'
 }
 
 function GridCard({ doc, onSelect }: { doc: Document; onSelect: () => void }) {
@@ -264,10 +180,9 @@ function GridCard({ doc, onSelect }: { doc: Document; onSelect: () => void }) {
           {doc.filename}
         </h4>
         <div className="flex items-center justify-between">
-          <Badge variant={docTypeBadgeVariant(doc.type)}>{doc.type}</Badge>
+          <Badge variant={typeBadgeVariant(doc.type)}>{doc.type}</Badge>
           <span className="text-[#475569] text-[10px] font-mono">{doc.pages > 0 ? `${doc.pages}p` : '—'}</span>
         </div>
-        <div className="text-[#94A3B8] text-xs truncate">{doc.company}</div>
         <div className="flex items-center justify-between pt-2 border-t border-[#1E293B]">
           <StatusCell status={doc.status} />
           <span className="text-[#475569] text-[10px] font-mono">{doc.size}</span>
@@ -282,25 +197,60 @@ function GridCard({ doc, onSelect }: { doc: Document; onSelect: () => void }) {
 export default function DocumentsPage() {
   const [showUpload, setShowUpload] = useState(false)
   const [view, setView] = useState<'list' | 'grid'>('list')
-  const [typeFilter, setTypeFilter] = useState<DocType | 'All Types'>('All Types')
   const [statusFilter, setStatusFilter] = useState<DocStatus | 'All Statuses'>('All Statuses')
   const [search, setSearch] = useState('')
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null)
   const [chatMessage, setChatMessage] = useState('')
+  const [documents, setDocuments] = useState<Document[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const filtered = DOCUMENTS.filter((d) => {
-    const matchesType = typeFilter === 'All Types' || d.type === typeFilter
+  async function fetchDocuments() {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await api.list<ApiDocument>('/api/v1/documents', { per_page: 100 })
+      setDocuments(res.items.map(mapDocument))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load documents')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchDocuments() }, [])
+
+  async function handleFileUpload(files: FileList | null) {
+    if (!files?.length) return
+    setUploading(true)
+    try {
+      for (const file of Array.from(files)) {
+        const formData = new FormData()
+        formData.append('file', file)
+        await api.upload('/api/v1/documents', formData)
+      }
+      setShowUpload(false)
+      await fetchDocuments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const filtered = documents.filter((d) => {
     const matchesStatus = statusFilter === 'All Statuses' || d.status === statusFilter
     const q = search.toLowerCase()
     const matchesSearch =
       !q ||
       d.filename.toLowerCase().includes(q) ||
-      d.company.toLowerCase().includes(q) ||
       d.type.toLowerCase().includes(q)
-    return matchesType && matchesStatus && matchesSearch
+    return matchesStatus && matchesSearch
   })
 
-  const processedCount = DOCUMENTS.filter((d) => d.status === 'processed').length
+  const completedCount = documents.filter((d) => d.status === 'completed').length
 
   return (
     <AppShell>
@@ -311,7 +261,7 @@ export default function DocumentsPage() {
             <div>
               <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[#F8FAFC]">Documents</h1>
               <p className="text-[#94A3B8] text-sm mt-0.5">
-                {DOCUMENTS.length} documents — {processedCount} processed
+                {loading ? 'Loading...' : `${documents.length} documents — ${completedCount} completed`}
               </p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
@@ -342,53 +292,65 @@ export default function DocumentsPage() {
 
           {/* Upload area — toggled */}
           {showUpload && (
-            <div className="bg-[#16161F] border-2 border-dashed border-[#1E293B] hover:border-[#3B82F6]/50 rounded-xl p-8 text-center transition-colors">
+            <div
+              className="bg-[#16161F] border-2 border-dashed border-[#1E293B] hover:border-[#3B82F6]/50 rounded-xl p-8 text-center transition-colors"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => { e.preventDefault(); handleFileUpload(e.dataTransfer.files) }}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx,.xlsx,.csv"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFileUpload(e.target.files)}
+              />
               <div className="flex flex-col items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-[#3B82F6]/10 flex items-center justify-center">
-                  <CloudUpload className="w-6 h-6 text-[#3B82F6]" />
+                  {uploading ? (
+                    <Loader2 className="w-6 h-6 text-[#3B82F6] animate-spin" />
+                  ) : (
+                    <CloudUpload className="w-6 h-6 text-[#3B82F6]" />
+                  )}
                 </div>
                 <div>
-                  <p className="text-[#F8FAFC] font-medium mb-1">Drop files here or click to upload</p>
+                  <p className="text-[#F8FAFC] font-medium mb-1">
+                    {uploading ? 'Uploading...' : 'Drop files here or click to upload'}
+                  </p>
                   <p className="text-[#475569] text-xs">Supports: PDF, DOCX, XLSX, CSV — max 50 MB per file</p>
                 </div>
-                <button className="h-9 px-4 bg-[#12121A] border border-[#1E293B] hover:bg-[#1E293B] text-[#F8FAFC] text-sm font-medium rounded-lg transition-colors">
-                  Browse Files
-                </button>
+                {!uploading && (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="h-9 px-4 bg-[#12121A] border border-[#1E293B] hover:bg-[#1E293B] text-[#F8FAFC] text-sm font-medium rounded-lg transition-colors"
+                  >
+                    Browse Files
+                  </button>
+                )}
               </div>
             </div>
           )}
 
           {/* Filter row */}
           <div className="flex flex-col sm:flex-row gap-3">
-            {/* Doc type */}
-            <div className="relative">
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value as DocType | 'All Types')}
-                className="appearance-none bg-[#12121A] border border-[#1E293B] rounded-lg text-xs text-[#94A3B8] pl-3 pr-8 py-2 focus:outline-none focus:border-[#3B82F6] cursor-pointer transition-colors"
-              >
-                {DOC_TYPE_OPTIONS.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-[#475569] pointer-events-none" />
-            </div>
-
-            {/* Status */}
             <div className="relative">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as DocStatus | 'All Statuses')}
                 className="appearance-none bg-[#12121A] border border-[#1E293B] rounded-lg text-xs text-[#94A3B8] pl-3 pr-8 py-2 focus:outline-none focus:border-[#3B82F6] cursor-pointer transition-colors capitalize"
               >
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s} className="capitalize">{s}</option>
-                ))}
+                <option value="All Statuses">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="classifying">Classifying</option>
+                <option value="parsing">Parsing</option>
+                <option value="chunking">Chunking</option>
+                <option value="embedding">Embedding</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
               </select>
               <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-[#475569] pointer-events-none" />
             </div>
 
-            {/* Search */}
             <div className="relative sm:ml-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#475569]" />
               <input
@@ -401,8 +363,19 @@ export default function DocumentsPage() {
             </div>
           </div>
 
-          {/* Grid view */}
-          {view === 'grid' ? (
+          {/* Loading / Error */}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-6 h-6 text-[#3B82F6] animate-spin" />
+              <span className="ml-3 text-sm text-[#94A3B8]">Loading documents...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center py-12 gap-3 text-red-400">
+              <AlertCircle className="w-5 h-5" />
+              <span className="text-sm">{error}</span>
+              <button onClick={fetchDocuments} className="text-sm text-[#3B82F6] underline ml-2">Retry</button>
+            </div>
+          ) : view === 'grid' ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filtered.map((doc) => (
                 <GridCard key={doc.id} doc={doc} onSelect={() => setSelectedDoc(doc)} />
@@ -417,15 +390,13 @@ export default function DocumentsPage() {
             /* List view */
             <div className="bg-[#16161F] border border-[#1E1E2E] rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[900px]">
+                <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
                     <tr className="border-b border-[#1E293B]">
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider w-[28%]">Document</th>
-                      <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider">Company</th>
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider">Type</th>
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider text-right">Pages</th>
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider text-right">Chunks</th>
-                      <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider">Uploaded By</th>
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider">Date</th>
                       <th className="py-3 px-4 text-[11px] text-[#475569] font-medium uppercase tracking-wider text-center">Status</th>
                       <th className="py-3 px-4 w-10" />
@@ -434,8 +405,8 @@ export default function DocumentsPage() {
                   <tbody className="text-sm">
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-4 py-12 text-center text-[#475569]">
-                          No documents match your filters.
+                        <td colSpan={7} className="px-4 py-12 text-center text-[#475569]">
+                          No documents found. Upload a file to get started.
                         </td>
                       </tr>
                     ) : (
@@ -448,41 +419,28 @@ export default function DocumentsPage() {
                           } ${selectedDoc?.id === doc.id ? 'bg-[#3B82F6]/5' : ''}`}
                           style={{ height: '52px' }}
                         >
-                          {/* Filename */}
                           <td className="px-4 py-2.5">
                             <div className="flex items-center gap-3">
-                              <FileIcon format={doc.format} />
+                              <FileIcon_ format={doc.format} />
                               <div className="min-w-0">
                                 <div className="font-medium text-[#F8FAFC] truncate text-xs">{doc.filename}</div>
                                 <div className="text-[#475569] text-[10px] mt-0.5">{doc.size}</div>
                               </div>
                             </div>
                           </td>
-                          {/* Company */}
-                          <td className="px-4 py-2.5 text-[#94A3B8] text-xs max-w-[140px]">
-                            <div className="truncate">{doc.company}</div>
-                          </td>
-                          {/* Type */}
                           <td className="px-4 py-2.5">
-                            <Badge variant={docTypeBadgeVariant(doc.type)}>{doc.type}</Badge>
+                            <Badge variant={typeBadgeVariant(doc.type)}>{doc.type}</Badge>
                           </td>
-                          {/* Pages */}
                           <td className="px-4 py-2.5 text-right font-mono tabular-nums text-[#94A3B8] text-xs">
                             {doc.pages > 0 ? doc.pages : '—'}
                           </td>
-                          {/* Chunks */}
                           <td className="px-4 py-2.5 text-right font-mono tabular-nums text-[#94A3B8] text-xs">
                             {doc.chunks > 0 ? doc.chunks : '—'}
                           </td>
-                          {/* Uploaded by */}
-                          <td className="px-4 py-2.5 text-[#94A3B8] text-xs">{doc.uploadedBy}</td>
-                          {/* Date */}
                           <td className="px-4 py-2.5 text-[#94A3B8] font-mono text-xs">{doc.date}</td>
-                          {/* Status */}
                           <td className="px-4 py-2.5 text-center">
                             <StatusCell status={doc.status} />
                           </td>
-                          {/* Actions */}
                           <td
                             className="px-4 py-2.5 text-center text-[#475569] hover:text-[#94A3B8] transition-colors"
                             onClick={(e) => e.stopPropagation()}
@@ -496,10 +454,9 @@ export default function DocumentsPage() {
                 </table>
               </div>
 
-              {/* Footer */}
               <div className="px-4 py-3 border-t border-[#1E293B]">
                 <span className="text-xs text-[#475569]">
-                  {filtered.length} of {DOCUMENTS.length} documents
+                  {filtered.length} of {documents.length} documents
                 </span>
               </div>
             </div>
@@ -528,7 +485,6 @@ export default function DocumentsPage() {
                   <div className="text-xs font-medium text-[#F8FAFC] break-words leading-snug">
                     {selectedDoc.filename}
                   </div>
-                  <div className="text-xs text-[#475569] mt-0.5">{selectedDoc.company}</div>
                 </div>
               </div>
 
@@ -539,7 +495,7 @@ export default function DocumentsPage() {
                   { label: 'Pages', value: selectedDoc.pages > 0 ? String(selectedDoc.pages) : '—' },
                   { label: 'Size', value: selectedDoc.size },
                   { label: 'Chunks', value: selectedDoc.chunks > 0 ? String(selectedDoc.chunks) : '—' },
-                  { label: 'Uploaded by', value: selectedDoc.uploadedBy },
+                  { label: 'Status', value: selectedDoc.status },
                   { label: 'Date', value: selectedDoc.date },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex items-center justify-between">
@@ -549,28 +505,9 @@ export default function DocumentsPage() {
                 ))}
               </div>
 
-              {/* Sample chunks */}
-              {selectedDoc.status === 'processed' && (
-                <div className="pt-2">
-                  <div className="text-[11px] text-[#475569] uppercase tracking-wider mb-2">Sample Chunks</div>
-                  {[
-                    'Revenue increased 12.3% YoY to £382m, driven by recurring software performance...',
-                    'EBITDA margin improved 120bps to 22.0%, reflecting operating leverage...',
-                    'Net debt £124m, representing 1.5x LTM EBITDA, within stated target range...',
-                  ].map((chunk, i) => (
-                    <div
-                      key={i}
-                      className="bg-[#12121A] border border-[#1E293B] rounded p-3 mb-2 cursor-pointer hover:border-[#475569] transition-colors"
-                    >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-mono text-[#475569] bg-[#1E293B] px-1.5 py-0.5 rounded">
-                          Chunk {i + 1}
-                        </span>
-                        <ChevronRight className="w-3 h-3 text-[#475569]" />
-                      </div>
-                      <p className="text-[11px] text-[#94A3B8] leading-relaxed">{chunk}</p>
-                    </div>
-                  ))}
+              {selectedDoc.errorMessage && (
+                <div className="bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-lg p-3">
+                  <p className="text-xs text-[#EF4444]">{selectedDoc.errorMessage}</p>
                 </div>
               )}
 
@@ -587,7 +524,7 @@ export default function DocumentsPage() {
             </div>
 
             {/* Mini chat */}
-            {selectedDoc.status === 'processed' && (
+            {selectedDoc.status === 'completed' && (
               <div className="border-t border-[#1E293B] p-3">
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare className="w-3.5 h-3.5 text-[#3B82F6]" />

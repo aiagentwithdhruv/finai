@@ -13,8 +13,11 @@ from app.schemas.common import PageMeta
 
 class DocumentStatus(StrEnum):
     PENDING = "pending"
-    PROCESSING = "processing"
-    PROCESSED = "processed"
+    CLASSIFYING = "classifying"
+    PARSING = "parsing"
+    CHUNKING = "chunking"
+    EMBEDDING = "embedding"
+    COMPLETED = "completed"
     FAILED = "failed"
 
 
@@ -47,7 +50,7 @@ class DocumentResponse(BaseModel):
     company_id: uuid.UUID | None
     deal_id: uuid.UUID | None
     filename: str
-    file_path: str
+    file_path: str | None
     mime_type: str | None
     file_size_bytes: int | None
     document_type: DocumentType | None

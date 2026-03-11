@@ -89,7 +89,6 @@ class IngestPipeline:
             first_page_text = self._read_sample(file_path)
             classification = await classify_document(
                 text_sample=first_page_text,
-                api_key=self._settings.anthropic_api_key,
             )
 
             # ------------------------------------------------------------------
@@ -143,7 +142,6 @@ class IngestPipeline:
 
             embedded_chunks = await embed_chunks(
                 chunks=raw_chunks,
-                api_key=self._settings.openai_api_key,
             )
 
             # ------------------------------------------------------------------

@@ -28,14 +28,19 @@ _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Map short model names → OpenRouter model IDs
 _MODEL_ALIASES: dict[str, str] = {
-    # Short names for convenience
-    "grok-4-1-fast-reasoning": "x-ai/grok-4-1-fast-reasoning",
-    "grok-4-1-fast-non-reasoning": "x-ai/grok-4-1-fast-non-reasoning",
+    # Short names for convenience — verified against OpenRouter API
+    "grok-4.1-fast": "x-ai/grok-4.1-fast",
+    "grok-4-fast": "x-ai/grok-4-fast",
+    "grok-4": "x-ai/grok-4",
+    # Legacy aliases (keep for .env backwards compat)
+    "grok-4-1-fast-reasoning": "x-ai/grok-4.1-fast",
+    "grok-4-1-fast-non-reasoning": "x-ai/grok-4.1-fast",
     "claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
     "claude-haiku-4-5-20251001": "anthropic/claude-haiku-4.5",
     "kimi-k2.5": "moonshotai/kimi-k2.5",
     "gpt-4o": "openai/gpt-4o",
-    "deepseek-chat": "deepseek/deepseek-chat",
+    "deepseek-chat": "deepseek/deepseek-chat-v3.1",
+    "deepseek-v3.2": "deepseek/deepseek-v3.2",
 }
 
 

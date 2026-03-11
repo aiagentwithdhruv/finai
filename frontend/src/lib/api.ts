@@ -1,7 +1,13 @@
-import type { ApiError, PaginatedResponse } from '@/types'
+import type { ApiError } from '@/types'
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
+
+// Backend pagination shape: { items: T[], meta: { page, per_page, total, total_pages } }
+export interface BackendPaginated<T> {
+  items: T[]
+  meta: { page: number; per_page: number; total: number; total_pages: number }
+}
 
 class ApiClient {
   private baseUrl: string
@@ -66,17 +72,29 @@ class ApiClient {
     return this.request<T>(path, { method: 'DELETE', ...init })
   }
 
-  // Convenience: paginated GET
-  paginated<T>(
+  /** Upload a file via multipart/form-data (no JSON Content-Type). */
+  async upload<T>(path: string, formData: FormData): Promise<T> {
+    const url = `${this.baseUrl}${path}`
+    const res = await fetch(url, { method: 'POST', body: formData })
+    if (!res.ok) {
+      let error: ApiError
+      try { error = await res.json() } catch { error = { detail: `HTTP ${res.status}` } }
+      throw new ApiClientError(error.detail, res.status, error.code)
+    }
+    return res.json() as Promise<T>
+  }
+
+  /** Paginated GET matching backend shape. */
+  list<T>(
     path: string,
     params?: Record<string, string | number | boolean>,
-  ): Promise<PaginatedResponse<T>> {
+  ): Promise<BackendPaginated<T>> {
     const qs = params
       ? '?' + new URLSearchParams(
           Object.entries(params).map(([k, v]) => [k, String(v)]),
         ).toString()
       : ''
-    return this.get<PaginatedResponse<T>>(`${path}${qs}`)
+    return this.get<BackendPaginated<T>>(`${path}${qs}`)
   }
 }
 

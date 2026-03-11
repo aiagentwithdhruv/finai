@@ -71,9 +71,11 @@ def _determine_confidence(chunks: list[dict[str, Any]]) -> str:
     top_score = chunks[0].get("relevance_score", 0)
     avg_score = sum(c.get("relevance_score", 0) for c in chunks) / len(chunks)
 
-    if top_score >= 0.80 and avg_score >= 0.70:
+    # OpenAI text-embedding-3-small cosine similarities are typically 0.25-0.55
+    # for relevant financial document chunks. Thresholds calibrated accordingly.
+    if top_score >= 0.40 and avg_score >= 0.30:
         return "high"
-    elif top_score >= 0.65:
+    elif top_score >= 0.30:
         return "medium"
     else:
         return "low"

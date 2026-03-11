@@ -9,7 +9,7 @@ Import every model here so that:
 Order: models with no foreign key dependencies first.
 """
 
-from app.models.base import Base, BaseModel, TimestampMixin, UUIDPrimaryKeyMixin  # noqa: F401
+from app.models.base import Base, TimestampMixin  # noqa: F401
 from app.models.company import Company  # noqa: F401
 from app.models.financial import FinancialStatement  # noqa: F401
 from app.models.comparable import Comparable  # noqa: F401
@@ -20,9 +20,7 @@ from app.models.audit import AuditLog  # noqa: F401
 
 __all__ = [
     "Base",
-    "BaseModel",
     "TimestampMixin",
-    "UUIDPrimaryKeyMixin",
     "Company",
     "FinancialStatement",
     "Comparable",

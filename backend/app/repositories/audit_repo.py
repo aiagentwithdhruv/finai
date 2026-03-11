@@ -17,11 +17,33 @@ class AuditRepository:
         self._session = session
 
     async def log(self, data: dict[str, Any]) -> AuditLog:
-        """Create a new immutable audit entry. Never update existing entries."""
-        entry = AuditLog(**data)
+        """Create a new immutable audit entry. Never update existing entries.
+
+        Accepts arbitrary dict — known AuditLog columns are mapped directly,
+        everything else is merged into the 'details' JSON field.
+        """
+        _KNOWN_COLS = {"user_id", "user_email", "action", "entity_type", "entity_id", "request_id", "ip_address", "details"}
+        col_data: dict[str, Any] = {}
+        extra: dict[str, Any] = {}
+
+        for k, v in data.items():
+            if k in _KNOWN_COLS:
+                col_data[k] = v
+            elif k == "actor":
+                col_data["user_id"] = v
+            else:
+                extra[k] = v
+
+        # Merge extra into details
+        if extra:
+            existing_details = col_data.get("details") or {}
+            if isinstance(existing_details, dict):
+                existing_details.update(extra)
+            col_data["details"] = existing_details
+
+        entry = AuditLog(**col_data)
         self._session.add(entry)
         await self._session.flush()
-        # No refresh needed — entry is write-once
         return entry
 
     async def list(

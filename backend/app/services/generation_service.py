@@ -108,9 +108,8 @@ class GenerationService:
         company_data = {
             "name": company.name,
             "sector": company.sector,
-            "industry": company.industry,
             "country": company.country,
-            "status": company.status,
+            "status": company.company_status,
             "description": company.description,
             "website": company.website,
         }
@@ -125,7 +124,7 @@ class GenerationService:
         model_used = ""
 
         if material_type == "credit_memo":
-            generator = CreditMemoGenerator(api_key=self._settings.anthropic_api_key)
+            generator = CreditMemoGenerator()
             result = await generator.generate(
                 company_name=company.name,
                 financials_data=financials_data,
@@ -139,7 +138,7 @@ class GenerationService:
             generation_cost_usd = result.get("generation_cost_usd", 0.0)
 
         elif material_type in ("teaser", "company_profile"):
-            generator = TeaserGenerator(api_key=self._settings.anthropic_api_key)
+            generator = TeaserGenerator()
             result = await generator.generate(
                 company_name=company.name,
                 company_data=company_data,

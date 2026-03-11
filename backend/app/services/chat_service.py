@@ -28,8 +28,8 @@ class ChatService:
     def __init__(self, settings: Settings, db_session: AsyncSession) -> None:
         self._settings = settings
         self._db = db_session
-        self._retriever = RAGRetriever(api_key=settings.openai_api_key)
-        self._chat = RAGChat(api_key=settings.anthropic_api_key)
+        self._retriever = RAGRetriever()
+        self._chat = RAGChat()
         self._audit = AuditRepository(db_session)
 
     async def chat(

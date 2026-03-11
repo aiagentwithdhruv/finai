@@ -63,7 +63,7 @@ class DocumentService:
                 "original_filename": filename,
                 "file_size_bytes": len(file_bytes),
                 "mime_type": mime_type or _detect_mime_type(filename),
-                "processing_status": ProcessingStatus.PENDING,
+                "status": ProcessingStatus.PENDING,
                 "company_id": company_id,
                 "deal_id": deal_id,
             }

@@ -32,7 +32,7 @@ class RAGRetriever:
 
     Usage::
 
-        retriever = RAGRetriever(api_key=settings.openai_api_key)
+        retriever = RAGRetriever()
         results = await retriever.retrieve(
             query="What was EBITDA margin in FY2023?",
             db_session=session,
@@ -41,8 +41,8 @@ class RAGRetriever:
         )
     """
 
-    def __init__(self, api_key: str) -> None:
-        self._api_key = api_key
+    def __init__(self) -> None:
+        pass
 
     async def retrieve(
         self,
@@ -72,7 +72,7 @@ class RAGRetriever:
 
         # Embed the query using the same model as chunk embeddings
         logger.debug("Embedding query for retrieval", extra={"query_len": len(query)})
-        query_embedding = await embed_single(query, self._api_key)
+        query_embedding = await embed_single(query)
 
         # Use the repository's vector search method
         from app.repositories.document_repo import DocumentRepository

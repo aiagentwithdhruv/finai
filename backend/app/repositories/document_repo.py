@@ -70,9 +70,16 @@ class DocumentRepository:
         status: str,
         extra: dict[str, Any] | None = None,
     ) -> Document | None:
+        # Only set columns that exist on the Document model
+        _DOC_COLS = {c.key for c in Document.__table__.columns}
         values: dict[str, Any] = {"status": status}
         if extra:
-            values.update(extra)
+            # Map pipeline keys to Document columns where possible
+            key_map = {"doc_type": "document_type", "processing_error": "error_message"}
+            for k, v in extra.items():
+                mapped = key_map.get(k, k)
+                if mapped in _DOC_COLS:
+                    values[mapped] = v
         stmt = (
             update(Document)
             .where(Document.id == document_id)
