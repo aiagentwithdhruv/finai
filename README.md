@@ -1,5 +1,7 @@
 # FinAI -- Financial Document Intelligence System
 
+![FinAI Dashboard](docs/finai-dashboard.jpg)
+
 **AI-powered operating system for UK financial advisory firms. Upload documents, ask questions, generate credit memos and deal teasers -- all with source-traced, hallucination-resistant AI.**
 
 Built by [AiwithDhruv](https://aiwithdhruv.com) | **Live Demo:** [finai.aiwithdhruv.com](https://finai.aiwithdhruv.com)
@@ -220,12 +222,6 @@ finai/
 | `GET` | `/api/v1/deals` | List deals with pipeline stage |
 | `GET` | `/api/v1/comparables` | Comparable company data |
 | `GET` | `/api/v1/audit` | Audit log with filters |
-
-## Screenshots
-
-![FinAI Dashboard](docs/finai-dashboard.jpg)
-
-*Dashboard — Deal pipeline, company metrics, document stats, and quick actions at a glance.*
 
 ## How It Works
 
