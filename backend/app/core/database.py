@@ -36,6 +36,8 @@ def _build_engine() -> AsyncEngine:
     connect_args: dict = {
         # asyncpg-specific options
         "server_settings": {"application_name": "finai-backend"},
+        # Disable prepared statements — required for Supabase/pgbouncer transaction mode
+        "statement_cache_size": 0,
     }
 
     # Use NullPool in test/serverless environments to avoid connection leaks.
