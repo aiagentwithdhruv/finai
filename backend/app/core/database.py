@@ -40,9 +40,10 @@ def _build_engine() -> AsyncEngine:
         "statement_cache_size": 0,
     }
 
-    # Use NullPool in test/serverless environments to avoid connection leaks.
-    # Default pool is fine for long-running servers.
-    pool_class = NullPool if settings.environment == "testing" else None  # type: ignore[assignment]
+    # Use NullPool when connecting via pgbouncer (Supabase pooler) or in test env.
+    # pgbouncer handles connection pooling — SQLAlchemy must not layer its own on top.
+    uses_pooler = "pooler.supabase.com" in settings.database_url
+    pool_class = NullPool if (uses_pooler or settings.environment == "testing") else None  # type: ignore[assignment]
 
     kwargs: dict = dict(
         url=settings.database_url,
