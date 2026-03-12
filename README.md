@@ -223,13 +223,9 @@ finai/
 
 ## Screenshots
 
-| Dashboard | AI Chat |
-|-----------|---------|
-| Deal pipeline, metrics, quick actions | Source-cited answers with confidence badges |
+![FinAI Dashboard](docs/finai-dashboard.jpg)
 
-| Companies | Generate |
-|-----------|----------|
-| UK company search with financials | Credit memos and deal teasers |
+*Dashboard — Deal pipeline, company metrics, document stats, and quick actions at a glance.*
 
 ## How It Works
 
